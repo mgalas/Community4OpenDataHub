@@ -1,0 +1,5 @@
+name: Q2A Forum
+type: module
+description: This module integrates drupal with Q2A and contains all custom setting
+package: Custom
+core: 8.x

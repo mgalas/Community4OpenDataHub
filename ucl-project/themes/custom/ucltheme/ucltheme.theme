@@ -1,0 +1,22 @@
+<?php
+function ucltheme_preprocess_node(&$variables) {
+	// if($variables['logged_in'] == true && $variables['node']->getOwnerId() == 
+	// 	$variables['user']->id) {
+	// 	//$variables['title_suffix'] = 'Hello ' + $variables['user']->getUsername() + ' . You are the auther.';
+	// 	$variables['test'] = 'Helloooo';
+	// }
+	//$variables['title_prefix'] = 'Helloooooooooooooooo';
+
+}
+
+function ucltheme_preprocess_field(&$variables) {
+	if($variables['logged_in'] == true) {
+		$variables['title_suffix'] = ' - [Hello ' . $variables['user']->getUsername() . ']';
+	}
+}
+/**
+ * @file
+ * Bootstrap sub-theme.
+ *
+ * Place your custom PHP code in this file.
+ */

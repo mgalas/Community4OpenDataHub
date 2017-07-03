@@ -1,0 +1,189 @@
+/**
+ * Place your custom styles here.
+ */
+
+ h1 {
+ 	color: red;
+ }
+
+/************ Menu ************/
+
+ .page--ucl-navbar-container {
+ 	border-radius: 0;
+ 	background-color: #ffffff;
+    box-shadow: 1px 1px 1px rgba(0,0,0, 0.5);
+    border-bottom: 1px solid rgba(71,74,72, 0.7);
+ }
+ .menu--ucl-menu-item {
+    text-transform: uppercase;
+ }
+ .menu--ucl-menu-item a{
+ 	color: #474A48 !important;
+    font-size: 15px;
+    font-weight: bold;
+ }
+
+.menu--ucl-menu-item:hover{
+    background-color: #73aed9;
+ }
+.menu--ucl-menu-item a:hover{
+    color: #ffffff !important;
+ }
+ .menu--ucl-menu-item .is-active {
+    background-color: rgba(75,150,205, 1);
+    color: #ffffff !important;
+ }
+
+/************  home page ****************/
+.html--ucl-front-page {
+    background-color: #f2f2f2;
+    background: url(/sites/ucl-project.dd/files/2017-06/chicago_fog-wallpaper-3554x1999-city1.jpg) no-repeat center center fixed;
+    background-size: cover;
+}
+
+
+.home-about-title {
+    font-weight: bold;
+    font-family: arial;
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 21px;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+ .block--ucl-home-aboutus-container {
+ 	background-color: rgba(230,230,230,0.5);
+    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.50);
+    padding: 10px;
+    padding-bottom: 22px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: 20px;
+    margin-top: 50px;
+ }
+
+ .block--home-about-title {
+ 	color: #4B96CD;
+    font-family: arial;
+    font-size: 25px;
+ }
+ .block--ucl-home-aboutus-container .field--name-body {
+    margin-left: 7px;
+    margin-right: 11px;
+    font-family: proxima-nova;
+    line-height: 1.4;
+    color: #333;
+    font-size: 18px;
+ }
+ .block--home-main-elements-container {
+    padding: 0;
+    margin-top: 50px;
+ }
+
+ .views-view--home-main-element {
+    padding-right: 0;
+ }
+ .field--home-main-element {
+    height: 200px;
+    display: inline-block;
+    width: 100%;
+    padding: 20% 0% 28% 0%;
+    color: rgba(52, 56, 101, 0.8);
+    letter-spacing: 1px;
+    text-align: center;
+    transition: all .3s ease;
+    background-size: cover;
+ }
+
+ .field--home-main-element h3 {
+    font-size: 22px;
+ }
+
+ .margin-left-50 {
+    margin-left: 50px;
+ }
+
+ #dataFacilityText, #analyticsFacilityText, #expertFacilityText, #userFacilityText {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-size: 18px;
+    line-height: 24px;
+    bottom: 0;
+    /*height: 0%;*/
+    transition: all .3s ease;
+    width: 100%;
+    left: 0;
+    opacity: 0;
+    color: rgba(255, 255, 255, 0.8);
+    padding-top: 100px;
+    margin-top: 50px;
+ }
+
+ #dataFacilityText a, #analyticsFacilityText a, #expertFacilityText a, #userFacilityText a{
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+ }
+/* #dataFacilityHome, #analyticsFacilityHome {
+    margin-top: 50px;
+ }*/
+
+ #dataFacilityHome:hover, #analyticsFacilityHome:hover,
+ #expertFacilityHome:hover, #userFacilityHome:hover {
+    color: rgba(255, 255, 255, 0.9);
+ }
+
+ #dataFacilityHome:hover #dataFacilityText,
+ #analyticsFacilityHome:hover #analyticsFacilityText,
+ #expertFacilityHome:hover #expertFacilityText,
+ #userFacilityHome:hover #userFacilityText{
+    height: 100%;
+    opacity: 1;
+ }
+
+/*********** Main colors *************/
+.user-facility-color {
+    background-color: #008DC9;
+        border-radius: 4px;
+    border: solid 1px #20538D;
+    color: #ffffff;
+ }
+
+ .expert-facility-color {
+    background-color: #008DC9;
+        border-radius: 4px;
+    border: solid 1px #20538D;
+    color: #ffffff;
+ }
+
+ .data-facility-color {
+    background-color: #008DC9;
+        border-radius: 4px;
+    border: solid 1px #20538D;
+    color: #ffffff;
+ }
+
+ .analytics-facility-color {
+    background-color: #008DC9;
+        border-radius: 4px;
+    border: solid 1px #20538D;
+    color: #ffffff;
+ }
+
+ .field--home-top-bar{
+    background-color: #202121;
+ }
+
+ /*************** Footer ******************/
+.page--ucl-footer-container {
+    width: 100%;
+
+}
+
+/***************media queries******************/
+
+@media only screen and (max-width: 900px) {
+     .menu--ucl-menu-item a{
+        font-size: 12px;
+     }
+}

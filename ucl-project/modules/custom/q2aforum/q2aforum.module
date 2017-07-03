@@ -1,0 +1,25 @@
+<?php
+
+/**
+	* @file
+	* Implements hook_user_login()
+	* Code for q2aforum
+	*/
+function q2aforum_user_login($account) {
+	$x = $_SESSION;
+	user_cookie_delete('logged_in_userid');
+	user_cookie_delete('is_logged_in');
+
+	user_cookie_save(['logged_in_userid' => \Drupal::currentUser()->id(), 'is_logged_in' => true]);
+}
+
+/**
+	* @file
+	* Implements hook_user_logout()
+	* Code for q2aforum
+	*/
+function q2aforum_user_logout($account) {
+	user_cookie_delete('logged_in_userid');
+	user_cookie_delete('is_logged_in');
+}
+
