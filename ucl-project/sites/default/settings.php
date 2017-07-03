@@ -770,11 +770,6 @@ $settings['file_scan_ignore_directories'] = [
 if (isset($_SERVER['DEVDESKTOP_DRUPAL_SETTINGS_DIR']) && file_exists($_SERVER['DEVDESKTOP_DRUPAL_SETTINGS_DIR'] . '/loc_ucl_project_dd.inc')) {
   require $_SERVER['DEVDESKTOP_DRUPAL_SETTINGS_DIR'] . '/loc_ucl_project_dd.inc';
 }
-
-$settings['trusted_host_patterns'] = array(
-'^ucl-project.dd$',
-);
-
 // </DDSETTINGS>
 $settings['install_profile'] = 'standard';
 
