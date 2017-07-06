@@ -1,0 +1,36 @@
+
+
+{% if context.list_style %}
+  {%- set attributes = attributes.addClass('item-list__' ~ context.list_style) %}
+{% endif %}
+{% if items or empty %}
+  {%- if title is not empty -%}
+    <h3>{{ title }}</h3>
+  {%- endif -%}
+
+  {%- if items -%}
+    <{{ list_type }}{{ attributes }}>
+      {%- for item in items -%}
+        <li{{ item.attributes }}>
+          <h4>{{ item.value }}</h4>
+          <p>{{ item.content }}</p>
+          {%- if item.updated is not null -%}
+            <span>Post updated on: {{item.updated}}</span>
+          {%- else -%}
+            <span>Post created on: {{item.created}}</span>
+          {%- endif -%}
+          <span>Auther: {{item.username}}<span>
+          <div>
+            <h6>Categories:</h6>
+            <span>{{item.cat1title}}<span>
+            <span>{{item.cat2title}}<span>
+            <span>{{item.cat3title}}<span>
+          </div>
+
+        </li>
+      {%- endfor -%}
+    </{{ list_type }}>
+  {%- else -%}
+    {{- empty -}}
+  {%- endif -%}
+{%- endif %}

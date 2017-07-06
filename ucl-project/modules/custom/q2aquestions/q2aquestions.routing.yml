@@ -1,0 +1,7 @@
+q2aquestions.content:
+  path: '/questions'
+  defaults:
+    _controller: '\Drupal\q2aquestions\Controller\q2aQuestionController::content'
+    _title: 'Q2A Questions'
+  requirements:
+    _permission: 'access content'
