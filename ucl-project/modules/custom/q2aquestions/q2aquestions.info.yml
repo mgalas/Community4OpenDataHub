@@ -1,0 +1,6 @@
+name: Q2A Questions
+description: Creates a list of questions from q2a post table.
+package: Custom
+type: module
+version: 1.0
+core: 8.x

@@ -1,4 +1,5 @@
 {#
+**************this is just temprary file. needs to be removed*****************
 /**
  * @file
  * Default theme implementation to display the basic html structure of a single
@@ -64,20 +65,12 @@
     <js-placeholder token="{{ placeholder_token|raw }}">
   </head>
   <body{{ attributes.addClass(body_classes) }}>
-  <div class="parallex">
-    <div class="parallex-layer">
     <a href="#main-content" class="visually-hidden focusable skip-link">
       {{ 'Skip to main content'|t }}
     </a>
-    <div class="home-logo-bar ">
-      <img class="home-ucl-logo" src="/sites/ucl-project.dd/files/2017-07/ucl-logo-blue.gif"></img>
-      <img class="home-udl-logo" src="/sites/ucl-project.dd/files/2017-07/logo_final_transparentbg.png"></img>
-    </div>
     {{ page_top }}
     {{ page }}
     {{ page_bottom }}
     <js-bottom-placeholder token="{{ placeholder_token|raw }}">
-  </div>
-  </div>
   </body>
 </html>

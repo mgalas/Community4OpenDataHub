@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function q2aquestions_theme()
+{
+  return [
+    'q2aquestions-question-test' => [
+      'variables' => array(
+        'items' => array(),
+        'title' => '',
+        'list_type' => 'ul',
+      ),
+    ],
+  ];
+}
+
+/**
+	* @file
+	* Implements hook_user_login()
+	* Code for q2aquestions
+	*/
+function q2aquestions_user_login($account) {
+	$x = $_SESSION;
+	user_cookie_delete('logged_in_userid');
+	user_cookie_delete('is_logged_in');
+
+	user_cookie_save(['logged_in_userid' => \Drupal::currentUser()->id(), 'is_logged_in' => true]);
+}
+
+/**
+	* @file
+	* Implements hook_user_logout()
+	* Code for q2aquestions
+	*/
+function q2aquestions_user_logout($account) {
+	user_cookie_delete('logged_in_userid');
+	user_cookie_delete('is_logged_in');
+}
+

@@ -7,7 +7,14 @@
  }
 
 /************ Menu ************/
+.home-udl-logo {
+    float: right;
+    background-color: #ffffff;
+}
 
+.home-logo-bar {
+    background-color: #202121;
+}
  .page--ucl-navbar-container {
  	border-radius: 0;
  	background-color: #ffffff;
@@ -174,10 +181,29 @@
     background-color: #202121;
  }
 
+
  /*************** Footer ******************/
 .page--ucl-footer-container {
     width: 100%;
 
+}
+
+ /*************** Login ******************/
+.form--login-container {
+    margin-top: 50px;
+    background-color: #008ab3;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+/*.form--login-container input[type='text']{
+    background-color: rgba(255,255,255,0.1) !important;
+}*/
+
+.form--login-container .form-required:after {
+    margin-left: 3px;
 }
 
 /***************media queries******************/

@@ -14,9 +14,17 @@ function ucltheme_preprocess_field(&$variables) {
 		$variables['title_suffix'] = ' - [Hello ' . $variables['user']->getUsername() . ']';
 	}
 }
+
 /**
- * @file
- * Bootstrap sub-theme.
- *
- * Place your custom PHP code in this file.
+ * Implements hook_theme_suggestions_HOOK_alter().
  */
+function ucltheme_theme_suggestions_form_alter(array &$suggestions, array $variables) {
+	switch($variables['element']['#id']) {
+		case "user-login-form":
+		case "user-register-form":
+			$suggestions[] = 'form__' . 'login';
+			break;
+		default:
+			break;
+	}
+}
