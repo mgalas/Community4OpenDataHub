@@ -1,4 +1,4 @@
-{{kint(context)}}
+
 <div class="col-sm-7 col-sm-offset-5">
 {% if items or empty %}
   {%- if title is not empty -%}
@@ -8,20 +8,26 @@
   {%- if items -%}
       {%- for item in items -%}
         <li{{ item.attributes }} class="questions-item">
-          <p class="question-author-container"><span class="questions-item-author">{{item.username}}</span></p>
+          <div class="question-author-container">
+            <span class="questions-item-author">{{item.username}}</span>
+            {%- if item.updated is not null -%}
+              <h5 class="questions-item-date">Post updated on: <span>{{item.updated}}</span></h5>
+            {%- else -%}
+              <h5 class="questions-item-date">Post created on: <span>{{item.created}}</span></h5>
+            {%- endif -%}
+          </div>
           <h4 class="questions-item-title">{{ item.value }}</h4>
           <p class="questions-item-content">{{ item.content }}</p>
-          {%- if item.updated is not null -%}
-            <span class="questions-item-date">Post updated on: {{item.updated}}</span>
-          {%- else -%}
-            <span class="questions-item-date">Post created on: {{item.created}}</span>
-          {%- endif -%}
-          
-          <div>
+          <div class="questions-item-category-container">
 
             <h5>{{item.cat1title}}</h5>
             <h5>{{item.cat2title}}</h5>
             <h5>{{item.cat3title}}</h5>
+          </div>
+          <div class="questions-item-link-container">
+          {% set url = '/q2a/index.php?qa=' ~ item.postid %}
+           <a href="{{url}}">Show more</a>
+           {#<span>{{url}}</span>#}
           </div>
 
         </li>
