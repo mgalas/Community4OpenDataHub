@@ -92,7 +92,7 @@
     padding-right: 0;
  }
  .field--home-main-element {
-    height: 200px;
+    height: 160px;
     display: inline-block;
     width: 100%;
     padding: 20% 0% 28% 0%;
@@ -181,6 +181,14 @@
     background-color: #202121;
  }
 
+  .field--home-top-bar .field--home-top-logo:nth-child(1){
+    float: left;
+ }
+ .field--home-top-bar .field--home-top-logo:nth-child(2){
+    float: right;
+    background-color: #ffffff;
+ }
+
 
  /*************** Footer ******************/
 .page--ucl-footer-container {
@@ -204,6 +212,40 @@
 
 .form--login-container .form-required:after {
     margin-left: 3px;
+}
+/***************media queries******************/
+
+.questions-item {
+    padding: 25px 35px;
+    font-family: "proxima-nova", sans-serif;
+    font-size: 16px;
+    background-color: #ffffff;
+    background-color: rgba(256,256,256,0.9);
+    list-style-type: none;
+}
+
+.questions-item-author {
+    font-weight: bold;
+    font-size: 18px;
+}
+.questions-item-title{
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.question-author-container {
+    border-bottom: 1px solid #333;
+}
+
+.questions-item-title {
+    font-weight: bold;
+}
+.questions-item-content {
+    margin-bottom: 40px;
+    margin-top: 20px;
+}
+.questions-item-date {
+
 }
 
 /***************media queries******************/
