@@ -60,6 +60,7 @@ class Q2ABlock extends BlockBase implements BlockPluginInterface {
     foreach ($result as $value) {
       $item = array('value' => $value->title,
                     'content' => $value->content,
+                    'postid' => $value->postid,
                     'tags' => $value->tags,
                     'created' => $value->created,
                     'updated' => $value->updated,
@@ -75,7 +76,6 @@ class Q2ABlock extends BlockBase implements BlockPluginInterface {
 
     return array(
       '#theme' => 'q2aquestions-question-test',
-      '#title' => $this->t('Example of using item_list'),
       '#items' => $items,
       '#cache' => ['max-age' => 0,],
     );
