@@ -1,36 +1,33 @@
-
-
-{% if context.list_style %}
-  {%- set attributes = attributes.addClass('item-list__' ~ context.list_style) %}
-{% endif %}
+{{kint(context)}}
+<div class="col-sm-7 col-sm-offset-5">
 {% if items or empty %}
   {%- if title is not empty -%}
     <h3>{{ title }}</h3>
   {%- endif -%}
 
   {%- if items -%}
-    <{{ list_type }}{{ attributes }}>
       {%- for item in items -%}
-        <li{{ item.attributes }}>
-          <h4>{{ item.value }}</h4>
-          <p>{{ item.content }}</p>
+        <li{{ item.attributes }} class="questions-item">
+          <p class="question-author-container"><span class="questions-item-author">{{item.username}}</span></p>
+          <h4 class="questions-item-title">{{ item.value }}</h4>
+          <p class="questions-item-content">{{ item.content }}</p>
           {%- if item.updated is not null -%}
-            <span>Post updated on: {{item.updated}}</span>
+            <span class="questions-item-date">Post updated on: {{item.updated}}</span>
           {%- else -%}
-            <span>Post created on: {{item.created}}</span>
+            <span class="questions-item-date">Post created on: {{item.created}}</span>
           {%- endif -%}
-          <span>Auther: {{item.username}}<span>
+          
           <div>
-            <h6>Categories:</h6>
-            <span>{{item.cat1title}}<span>
-            <span>{{item.cat2title}}<span>
-            <span>{{item.cat3title}}<span>
+
+            <h5>{{item.cat1title}}</h5>
+            <h5>{{item.cat2title}}</h5>
+            <h5>{{item.cat3title}}</h5>
           </div>
 
         </li>
       {%- endfor -%}
-    </{{ list_type }}>
   {%- else -%}
     {{- empty -}}
   {%- endif -%}
 {%- endif %}
+</div>
