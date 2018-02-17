@@ -1,23 +1,45 @@
+body{
+margin-top: 200px;
+margin: 0 auto;
+width: 900px;
+}
+
 #navbar {
-	background-color: #2980B9;
+ background-color: #202020;	
+ border: none;
 }
 
 
 .navbar-fixed-left {
   border:none;
-  width: 65px;
+  width: 105px;
   position: fixed;
-  margin-top: 59px;
-  top: 35px;
-  left:0px;
+  top: 60px;
+  left: 0px;
   border-radius: 0;
   height: 100%;
+  z-index: 1;
+  background-color: #202020;
+}
+
+.navbar-fixed-top {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 30;
+  height: 60px;
+  right: 0px;
+  background-color: black;
+}
+
+.navbar-fixed-top .navbar-nav > li {
+ width: 100px;
+ float: center;
 }
 
 .navbar-fixed-left .navbar-nav > li {
-  float: none;  /* Cancel default li float: left */
-  top:10px;
-  width: 139px;
+  float: center;  /* Cancel default li float: left */
+  width: 80px;
 }
 #navbar .navbar-header {
   display: inline-block;
@@ -30,7 +52,7 @@
   margin-left:10px;
 }
 .navbar-inverse .navbar-nav > li > a {
-    width:65px;
+    width: 105px;
     color: #9d9d9d;
 }
 
@@ -575,7 +597,7 @@ div.image-style-new, div.image-style-new div {
     display: block;
 }
 div.image-style-new div.input-group {
-    display: table;
+    display: block;
 }
 .table-striped>tbody>tr:nth-child(odd)>td.module, .table>tbody>tr>td.module, td.module {
     background: #ddd;
