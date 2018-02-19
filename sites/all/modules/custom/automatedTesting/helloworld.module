@@ -1,0 +1,18 @@
+<?php
+
+function helloworld_menu(){
+	$items = array();
+
+	$items['helloworld'] = array(
+	  'title' => 'Hello World',
+  	  'access callback' => TRUE,
+ 	  'page callback' => 'helloworld_hello_page',
+	  'menu' => 'navigation',
+	);
+
+	return $items;
+}
+
+function helloworld_help_page(){
+	return t('Hello World. Welcome to Drupal.');
+}

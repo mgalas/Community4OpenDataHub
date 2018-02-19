@@ -12,7 +12,7 @@ width: 900px;
 
 .navbar-fixed-left {
   border:none;
-  width: 105px;
+  width: 60px;
   position: fixed;
   top: 60px;
   left: 0px;
@@ -32,15 +32,13 @@ width: 900px;
   background-color: black;
 }
 
-.navbar-fixed-top .navbar-nav > li {
- width: 100px;
- float: center;
-}
-
 .navbar-fixed-left .navbar-nav > li {
   float: center;  /* Cancel default li float: left */
-  width: 80px;
+  height: 100px;
+  width: 60px;
+  padding-bottom: 20px;
 }
+
 #navbar .navbar-header {
   display: inline-block;
   padding-top: .3125rem;
@@ -52,7 +50,7 @@ width: 900px;
   margin-left:10px;
 }
 .navbar-inverse .navbar-nav > li > a {
-    width: 105px;
+    width: 60px;
     color: #9d9d9d;
 }
 
