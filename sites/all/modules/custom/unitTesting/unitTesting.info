@@ -1,0 +1,5 @@
+name = Unit Testing
+description = All custom unit tests on the current drupal instance
+core = 7.x
+
+files[] = tests/site_test.example.test

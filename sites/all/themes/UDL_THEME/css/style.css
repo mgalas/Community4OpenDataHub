@@ -9,6 +9,12 @@ width: 900px;
  border: none;
 }
 
+#search-block-form input.form-submit, #search-form input.form-submit{
+  height: 24px;
+width: 24px;
+cursos: pointer;
+border: 1px black;
+}
 
 .navbar-fixed-left {
   border:none;
@@ -221,11 +227,11 @@ p:last-child {
     margin: -.05em .5em 0 0;
 }
 form#search-block-form {
-    margin: 0;
+    margin: 50px;
 }
 .navbar #block-search-form {
-    width:700px;
-    margin: 5px 0 5px 5px;
+    width:200px;
+    margin: 500px 0 5px 5px;
 }
 .navbar #block-search-form .input-group-btn {
     width: auto;
@@ -556,7 +562,7 @@ td.checkbox, td.radio, th.checkbox, th.radio {
     margin: 4px 0 0;
 }
 .views-exposed-form .views-exposed-widget .btn {
-    margin-top: 1.8em;
+    margin-bottom: 15px !important;
 }
 table .checkbox input[type=checkbox], table .radio input[type=radio] {
     max-width: inherit;

@@ -1,37 +1,59 @@
-Modules extend your site functionality beyond Drupal core.
+README.txt
+==========
 
-WHAT TO PLACE IN THIS DIRECTORY?
---------------------------------
+A module containing helper functions for Drupal developers and
+inquisitive admins. This module can print a log of
+all database queries for each page request at the bottom of each page. The
+summary includes how many times each query was executed on a page, and how long
+each query took.
 
-Placing downloaded and custom modules in this directory separates downloaded and
-custom modules from Drupal core's modules. This allows Drupal core to be updated
-without overwriting these files.
+ It also offers
+ - a block for running custom PHP on a page
+ - a block for quickly accessing devel pages
+ - a block for masquerading as other users (useful for testing)
+ - reports memory usage at bottom of page
+ - A mail-system class which redirects outbound email to files
+ - more
 
-DOWNLOAD ADDITIONAL MODULES
----------------------------
+ This module is safe to use on a production site. Just be sure to only grant
+ 'access development information' permission to developers.
 
-Contributed modules from the Drupal community may be downloaded at
-https://www.drupal.org/project/project_module.
+Also a dpr() function is provided, which pretty prints arrays and strings.
+Useful during development. Many other nice functions like dpm(), dvm().
 
-ORGANIZING MODULES IN THIS DIRECTORY
-------------------------------------
+AJAX developers in particular ought to install FirePHP Core from
+http://www.firephp.org/ and put it in the devel directory. You may
+use the devel-download drush command to download the library. If downloading by hand,
+your path to fb.php should look like devel/FirePHPCore/lib/FirePHPCore/fb.php.
+You can use svn checkout http://firephp.googlecode.com/svn/trunk/trunk/Libraries/FirePHPCore.
+Then you can log php variables to the Firebug console. Is quite useful.
 
-You may create subdirectories in this directory, to organize your added modules,
-without breaking the site. Some common subdirectories include "contrib" for
-contributed modules, and "custom" for custom modules. Note that if you move a
-module to a subdirectory after it has been enabled, you may need to clear the
-Drupal cache so it can be found. (Alternatively, you can disable the module
-before moving it and then re-enable it after the move.)
+Included in this package is also:
 
-MULTISITE CONFIGURATION
------------------------
+- devel_node_access module which prints out the node_access records for a given node. Also offers hook_node_access_explain for all node access modules to implement. Handy.
+- devel_generate.module which bulk creates nodes, users, comment, terms for development.
 
-In multisite configurations, modules found in this directory are available to
-all sites. Alternatively, the sites/your_site_name/modules directory pattern
-may be used to restrict modules to a specific site instance.
+Some nifty drush integration ships with devel and devel_generate. See drush help for details.
 
-MORE INFORMATION
-----------------
+DEVEL GENERATE EXTENSIONS
+=========================
+Devel Images Provider [http://drupal.org/project/devel_image_provider] allows to configure external providers for images.
 
-Refer to the "Developing for Drupal" section of the README.txt in the Drupal
-root directory for further information on extending Drupal with custom modules.
+COMPATIBILITY NOTES
+==================
+- Modules that use AHAH may have incompatibility with the query log and other
+  footer info. Consider setting $GLOBALS['devel_shutdown'] = FALSE if you run into
+  any issues.
+
+DRUSH UNIT TEST
+==================
+See develDrushTest.php for an example of unit testing of the Drush integration.
+This uses Drush's own test framework, based on PHPUnit. To run the tests, use
+phpunit --bootstrap=/path/to/drush/tests/drush_testcase.inc. Note that we must name a file
+under /tests there.
+
+AUTHOR/MAINTAINER
+======================
+-moshe weitzman <weitzman at tejasa DOT com>
+http://cyrve.com
+Hans Salvisberg <drupal at salvisberg DOT com>
