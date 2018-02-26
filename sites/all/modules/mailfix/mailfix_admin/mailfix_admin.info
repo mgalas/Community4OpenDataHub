@@ -1,0 +1,12 @@
+name = "Mailfix Admin"
+description = "Provides a means of delegating administration of Mailfix domains"
+package = Mail
+core = 7.x
+php = 5.1
+
+; Information added by drupal.org packaging script on 2013-10-01
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "mailfix"
+datestamp = "1380585653"
+

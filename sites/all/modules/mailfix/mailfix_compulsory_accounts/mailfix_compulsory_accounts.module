@@ -1,0 +1,182 @@
+<?php
+/**
+ * @file
+ * Provides delegation of Mailfix administration.
+ *
+ */
+
+function mailfix_compulsory_accounts_debug($message = NULL, $type = 'status', $repeat = TRUE)
+{
+  if (0)
+    drupal_set_message($message, $type, $repeat);
+}
+
+function mailfix_compulsory_accounts_name($email)
+{
+  return drupal_substr($email, 0, strpos($email, "@"));
+}
+
+function mailfix_compulsory_accounts_is_required($mail)
+{
+  mailfix_compulsory_accounts_debug("Retrieving compulsory account list to check '$mail'.");
+
+  $check_for = mailfix_compulsory_accounts_name($mail);
+
+  mailfix_compulsory_accounts_debug("Account email is $mail. Looking for $check_for.");
+
+  $result = db_query("SELECT email FROM {mailfix_compulsory_accounts} WHERE email = '%s'", $check_for);
+
+  $required = $result[0] ? 1 : 0;
+
+  mailfix_compulsory_accounts_debug("Result is $required[0]");
+  return $required[0];
+}
+
+/**
+ * Implementation of hook_permission().
+ */
+function mailfix_compulsory_accounts_permission() {
+  return array(
+    'administer compulsory mailfix accounts' => array(
+       'title' => t('Administer compulsory Mailfix accounts'),
+    )
+  );
+}
+
+function mailfix_compulsory_accounts_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'user_profile_form':
+      $account = $form['_account']['#value'];
+      if (mailfix_compulsory_accounts_is_required($account->mail)) {
+        // disable editing of the account name and email
+        $form['account']['name']['#disabled'] = TRUE;
+	$form['account']['name']['#value'] = $account->name;
+        $form['account']['mail']['#disabled'] = TRUE;
+	$form['account']['mail']['#value'] = $account->mail;
+
+        // remove delete button
+        mailfix_compulsory_accounts_debug(t('Seeking to remove delete button.'));
+        unset($form['actions']['delete']);
+      }
+      break;
+    case 'user_confirm_delete':
+      if (mailfix_compulsory_accounts_is_required($form['_account']['#value']->mail))
+        drupal_goto("");
+      break;
+    case 'mailfix_add_domain':
+    case 'mailfix_edit_domain_form':
+      $form['nice_name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Nicely Formatted Name'),
+        '#description' => t('Enter the name in the format you would like used for Compulsory Accounts.'),
+        '#required' => FALSE,
+        '#weight' => 3,
+      );
+      $form['exempt'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Exempt from compulsory accounts.'),
+        '#description' => t('Tick if you would like this domain exempted when compulsory accounts are modified.'),
+        '#weight' => 4,
+      );
+
+      if ($form_id == 'mailfix_edit_domain_form') {
+	print_r($form);
+        // Get existing values.
+        $result = db_query("SELECT nice_name, exempt FROM {mailfix_domains} WHERE domain_id = :dom",
+           array(':dom' => $form['domain_id']['#value']))->fetchAssoc();
+        $form['nice_name']['#default_value'] = $result['nice_name'];
+        $form['exempt']['#default_value'] = $result['exempt'];
+      }
+
+      $form['#submit'][] = 'mailfix_compulsory_accounts_domain_fields_save';
+      break;
+  }
+}
+
+function mailfix_compulsory_accounts_domain_fields_save($form, &$form_state)
+{
+  db_query("UPDATE {mailfix_domains} SET nice_name = '%s', exempt = '%d' WHERE domain_id = %d",
+    $form_state['values']['nice_name'],
+    $form_state['values']['exempt'],
+    $form_state['values']['domain_id']);
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function mailfix_compulsory_accounts_menu() {
+  $items['admin/settings/mailfix/compulsory_accounts'] = array(
+    'title' => 'Mailfix Compulsory Addresses',
+    'description' => 'Configure compulsory addresses in Mailfix domains.',
+    'page callback' => 'mailfix_compulsory_accounts_overview',
+    'access arguments' => array('administer compulsory mailfix accounts'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 10,
+    'file' => 'mailfix_compulsory_accounts.inc'
+  );
+
+  $items['admin/settings/mailfix/compulsory_accounts/add'] = array(
+    'title' => 'Add Compulsory Address',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('mailfix_compulsory_accounts_form'),
+    'access arguments' => array('administer compulsory mailfix accounts'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+    'file' => 'mailfix_compulsory_accounts.inc'
+  );
+
+  $items['admin/settings/mailfix/compulsory_accounts/edit'] = array(
+    'title' => 'Edit Compulsory Address',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('mailfix_compulsory_accounts_edit_form'),
+    'access arguments' => array('administer compulsory mailfix accounts'),
+    'type' => MENU_CALLBACK,
+    'file' => 'mailfix_compulsory_accounts.inc'
+  );
+
+  $items['admin/settings/mailfix/compulsory_accounts/delete'] = array(
+    'title' => 'Delete Compulsory Address',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('mailfix_compulsory_accounts_delete_form'),
+    'access arguments' => array('administer compulsory mailfix accounts'),
+    'type' => MENU_CALLBACK,
+    'file' => 'mailfix_compulsory_accounts.inc'
+  );
+  return $items;
+} // mailfix_compulsory_account_menu
+
+/**
+ * Implementation of hook_user().
+ */
+function mailfix_compulsory_accounts_user($op, &$edit, &$account, $category = NULL) {
+
+  if ($op != "load")
+    mailfix_compulsory_accounts_debug("mailfix_compulsory_accounts_user: $op");
+
+  switch ($op) {
+    case 'validate':
+      return mailfix_compulsory_accounts_validate_user($edit, $account);
+    case 'update':
+      return mailfix_compulsory_accounts_update_user($edit);
+    case 'delete':
+      return mailfix_compulsory_accounts_delete_user($edit);
+  }
+} // mailfix_user
+
+function mailfix_compulsory_accounts_validate_user($edit, $account)
+{
+}
+
+function mailfix_compulsory_accounts_update_user($edit)
+{
+}
+
+function mailfix_compulsory_accounts_delete_user($edit)
+{
+}
+
+function mailfix_compulsory_accounts_mailfix_compulsory($account)
+{
+  mailfix_compulsory_accounts_debug("mailfx_compulsory_accounts_mailfix_compulsory hook, checking" . $account->mail . ".");
+  return mailfix_compulsory_accounts_is_required($account->mail);
+}

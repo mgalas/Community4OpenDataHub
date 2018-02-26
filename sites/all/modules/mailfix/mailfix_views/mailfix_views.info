@@ -1,0 +1,13 @@
+name = "Mailfix Views Integration"
+description = "Integration between Views and Mailfix."
+package = "Mail"
+core = 7.x
+dependencies[] = views
+dependencies[] = mailfix
+
+; Information added by drupal.org packaging script on 2013-10-01
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "mailfix"
+datestamp = "1380585653"
+

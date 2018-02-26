@@ -1,0 +1,653 @@
+<?php
+/**
+ * @file
+ * Provides delegation of Mailfix administration.
+ *
+ * Controls implemented by this module are:
+ *
+ * User type:
+ *   - Anonymous user, registering.
+ *     None. Mailfix module itself implements: May only register an account in a mailfix
+ *     domain if 'create/modify own account in a mailfix domain' is enabled for anonymous users.
+ *   - Authenticated user, editing own details.
+ *     May not change email address or username if email is in a Mailfix domain, unless they have
+ *     'create/modify own account in a mailfix domain' permission.
+ *   - Authenticated user with limited admin, editing another user's details.
+ *     May create, edit and delete accounts in their own domain(s).
+ *   - Authenticated user with full admin, editing another user's details.
+ *     May create, edit and delete accounts in any domain.
+ */
+
+require_once drupal_get_path('module', 'mailfix') .'/mailfix.inc';
+require_once drupal_get_path('module', 'mailfix_admin') .'/mailfix_admin_create_user.inc';
+
+define('MAILFIX_ADMIN_ACCESS_NONE', 0);
+define('MAILFIX_ADMIN_ACCESS_HIDE_ADMIN_FIELDS', 1);
+define('MAILFIX_ADMIN_ACCESS_READONLY_ADMIN_FIELDS', 2);
+define('MAILFIX_ADMIN_ACCESS_FULL', 3);
+
+function mailfix_admin_debug($message = NULL, $type = 'status', $repeat = TRUE)
+{
+  if (0)
+    drupal_set_message($message, $type, $repeat);
+}
+
+function mailfix_admin_get_current_dom_list($account, $quote)
+{
+  static $cache = array();
+
+  mailfix_admin_debug("Retrieving current dom list for $account->name ($account->uid)");
+  if (!isset($cache[$account->uid])) {
+    $query = db_select('mailfix_domains', 'md');
+    $query->fields('md', array('domain_name'));
+    $query->join('mailfix_domain_admins', 'ma', 'md.domain_id = ma.domain_id');
+    $query->condition('ma.uid', $account->uid, '=');
+    $result = $query->execute()->fetchAllKeyed(0, 0);
+    //$result = db_query("SELECT md.domain_name FROM {mailfix_domains} md INNER JOIN {mailfix_domain_admins} ma ON md.domain_id = ma.domain_id WHERE ma.uid = %d", $account->uid);
+
+    $cache[$account->uid] = $result;
+  } else
+    mailfix_admin_debug("Using cached value.");
+
+  //$doms_list = $quote . implode($quote . ", " . $quote , $cache[$account->uid]) . $quote;
+  $doms_list = $quote . implode("$quote, $quote" , $cache[$account->uid]) . $quote;
+  mailfix_admin_debug("Result is '$doms_list'");
+  return $doms_list;
+}
+
+function mailfix_admin_get_current_user_list($account, $quote)
+{
+  static $cache = array();
+
+  mailfix_admin_debug("Retrieving current user list for $account->name ($account->uid)");
+  if (!isset($cache[$account->uid])) {
+  	$query = db_select('mailfix_domain_admins_users', 'mdau');
+  	$query->join('users', 'u', 'mdau.tuid = u.uid');
+  	$query->fields('u', array('name'));
+  	$query->condition('mdau.uid', $account->uid, '=');
+  	$result = $query->execute()->fetchAllKeyed(0, 0);
+    //$result = db_query("SELECT u.name from mailfix_domain_admins_users mdau JOIN users u ON mdau.tuid = u.uid WHERE mdau.uid = %d", $account->uid);
+
+    $cache[$account->uid] = $result;
+  } else
+    mailfix_admin_debug("Using cached value.");
+
+  $names_list = $quote . implode("$quote, $quote" , $cache[$account->uid]) . $quote;
+  mailfix_admin_debug("Result is '$names_list'");
+  return $names_list;
+}
+
+function __mailfix_admin_get_access_level($type, $account, &$old_dom_id = NULL)
+{
+  global $user;
+
+  mailfix_admin_debug(t('Getting access level for user %user (%euser) to %type user %uid (%name)',
+    array('%user' => $user->uid,
+          '%euser' => $user->name,
+          '%type' => $type,
+          '%uid' => $account->uid,
+          '%name' => $account->name)));
+
+  if ($type == 'delete') {
+    $compulsory = module_invoke_all('mailfix_compulsory', $account);
+    if ($compulsory && $compulsory[0] == 1)
+      return MAILFIX_ADMIN_ACCESS_NONE;
+  }
+
+  if ($user->uid == 1 || user_access('administer users')) {
+    mailfix_admin_debug(t('User 1 or administer users: Write access'));
+    return MAILFIX_ADMIN_ACCESS_FULL;
+  }
+
+  if ($user->uid == $account->uid) {
+    mailfix_admin_debug(t('Editing own account.'));
+    return MAILFIX_ADMIN_ACCESS_READONLY_ADMIN_FIELDS;
+  }
+
+  if ($account->uid == 1) {
+    mailfix_admin_debug(t('Not giving access to user 1.'));
+    return MAILFIX_ADMIN_ACCESS_NONE;
+  }
+
+  $result = db_query("SELECT u.name from {mailfix_domain_admins_users} mdau JOIN {users} u ON mdau.tuid = u.uid WHERE mdau.uid = :uid AND mdau.tuid = :tuid",
+	  array(':uid' => $user->uid, ':tuid' => $account->uid))->fetchField();
+
+  if ($result)
+    return MAILFIX_ADMIN_ACCESS_FULL;
+
+  // Look up domain id if this hasn't already been done.
+  if (!$old_dom_id)
+    $old_dom_id = mailfix_domain_id_from_email($account->mail);
+
+  if (!$old_dom_id)
+    return user_access('edit non Mailfix accounts') ? MAILFIX_ADMIN_ACCESS_FULL :
+          (user_access('view non Mailfix accounts') ? MAILFIX_ADMIN_ACCESS_HIDE_ADMIN_FIELDS :
+             MAILFIX_ADMIN_ACCESS_NONE);
+
+  mailfix_admin_debug(t('User UID is %uuid, UID is %uid, old mail is %mail, dom id is %dom', array('%uuid' => $user->uid, '%uid' => $account->uid, '%mail' => $account->mail, '%dom' => $old_dom_id)));
+
+  $result = db_query('SELECT mda.domain_id AS id FROM {mailfix_domain_admins} mda WHERE mda.uid = :uid', array(':uid' => $user->uid))->fetchAllKeyed(0, 0);
+  $explicit_admin = 0;
+
+  foreach ($result as $dom_id) {
+    mailfix_admin_debug(t('Seeking dom %edom (%email), got %got', array('%edom' => $account->mail, '%email' => $old_dom_id, '%got' => $dom_id)));
+    if ($old_dom_id && $dom_id == $old_dom_id) {
+      $explicit_admin = 1;
+      break;
+    }
+  }
+
+  mailfix_admin_debug(t('Explicit admin is %expl.', array('%expl' => $explicit_admin)));
+
+  return $explicit_admin ? MAILFIX_ADMIN_ACCESS_FULL :
+           (user_access('view Mailfix accounts with no admin rights') && $type == 'view' ? 
+             (user_access('view domain admin rights') ? MAILFIX_ADMIN_ACCESS_READONLY_ADMIN_FIELDS :
+                                                        MAILFIX_ADMIN_ACCESS_HIDE_ADMIN_FIELDS ) :
+             MAILFIX_ADMIN_ACCESS_NONE);
+}
+
+function mailfix_admin_get_access_level($type, $account, &$old_dom_id = NULL)
+{
+  static $cache = array();
+
+  if (!isset($cache[$account->uid][$type]))
+    $cache[$account->uid][$type] = __mailfix_admin_get_access_level($type, $account, $old_dom_id);
+  return $cache[$account->uid][$type];
+}
+
+/* Hook used by mailfix to access our more fine grained permissions */
+function mailfix_admin_mailfix_access($type, $account)
+{
+  return mailfix_admin_get_access_level($type, $account);
+}
+
+function mailfix_admin_user_view_access($account)
+{
+  //mailfix_admin_debug("Account is $account->name");
+  if (user_view_access($account))
+    return TRUE;
+
+  // Is the user they're trying to view a user they're allowed to access?
+  mailfix_admin_debug(t('mailfix_admin_user_view_access'));
+  $access_level = mailfix_admin_get_access_level('view', $account);
+  return ($access_level > MAILFIX_ADMIN_ACCESS_NONE);
+}
+
+function mailfix_admin_user_edit_access($account)
+{
+  if (user_edit_access($account))
+    return TRUE;
+
+  mailfix_admin_debug(t('mailfix_admin_user_edit_access'));
+  // Is the user they're trying to administer one they're allowed to access?
+  $access_level = mailfix_admin_get_access_level('edit', $account);
+  return ($access_level > MAILFIX_ADMIN_ACCESS_HIDE_ADMIN_FIELDS);
+}
+
+function mailfix_admin_user_delete_access($account)
+{
+  mailfix_admin_debug(t('mailfix_admin_user_delete_access'));
+  // Is the user they're trying to administer one they're allowed to access?
+  $access_level = mailfix_admin_get_access_level('delete', $account);
+  return ($access_level < MAILFIX_ADMIN_ACCESS_FULL ? 0 : 1);
+}
+
+function mailfix_admin_menu_alter(&$items)
+{
+  mailfix_admin_debug(t('mailfix_admin_menu_alter'));
+  if (1) {
+  $items['user/%user']['access callback'] = 'mailfix_admin_user_view_access';
+  //$items['user/%user']['access arguments'] = array(1);
+  $items['user/%user/edit']['access callback'] = 'mailfix_admin_user_edit_access';
+  //$items['user/%user/edit']['access arguments'] = array(1);
+
+  if (0 && ($categories = _user_categories()) && (count($categories) > 1)) {
+    foreach ($categories as $key => $category) {
+      // 'account' is already handled by the MENU_DEFAULT_LOCAL_TASK.
+      if ($category['name'] != 'account') {
+        $items['user/%user_category/edit/' . $category['name']]['access callback'] = 'mailfix_admin_user_edit_access';
+        $items['user/%user_category/edit/' . $category['name']]['access arguments'] = array(1);
+      }
+    }
+  }
+
+  $items['user/%user/delete']['access callback'] = 'mailfix_admin_user_delete_access';
+  $items['user/%user/delete']['access arguments'] = array(1);
+  }
+}
+
+function mailfix_admin_delete_user_submit($form, &$form_state) {
+  $destination = '';
+  if (isset($_REQUEST['destination'])) {
+    $destination = drupal_get_destination();
+    unset($_REQUEST['destination']);
+  }
+  // Note: We redirect from user/uid/edit to mailfix_admin/uid/delete to make the tabs disappear.
+  $form_state['redirect'] = array('mailfix_admin/'. $form_state['user']->uid ."/delete" , array('query' => $destination));
+}
+
+/**
+ * Form builder; confirm form for user deletion.
+ *
+ * @ingroup forms
+ * @see user_confirm_delete_submit()
+ */
+function mailfix_admin_confirm_delete_user($form, &$form_state) {
+
+  #$form['_account'] = array('#type' => 'value', '#value' => $account);
+
+  return confirm_form($form,
+    t('Are you sure you want to delete the account %name?', array('%name' => $form_state['build_info']['args'][0]->name)),
+    'user/'. $form_state['build_info']['args'][0]->uid,
+    t('All submissions made by this user will be attributed to the anonymous account. This action cannot be undone.'),
+    t('Delete'), t('Cancel'));
+}
+
+/**
+ * Submit function for the confirm form for user deletion.
+ */
+function mailfix_admin_confirm_delete_user_submit($form, &$form_state) {
+  user_delete($form_state['build_info']['args'][0]->uid);
+  drupal_set_message(t('%name has been deleted.', array('%name' => $form_state['build_info']['args'][0]->name)));
+
+  if (!isset($_REQUEST['destination'])) {
+    $form_state['redirect'] = '';
+  }
+}
+
+function mailfix_admin_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'user_profile_form':
+      $may_delete = mailfix_admin_user_delete_access($form['#user']);
+
+
+      if ($may_delete) {
+      	$form['actions']['cancel'] = array(
+      			'#type' => 'submit',
+      			'#value' => t('Cancel account'),
+      			'#submit' => array('mailfix_admin_delete_user_submit'),
+      			'#access' => mailfix_admin_user_delete_access($form['#user'])
+      	);
+      } else {
+        unset($form['actions']['delete']);
+      }
+
+  // Is the user they're trying to administer one they're allowed to access?
+  $account = $form['#user'];
+  $access_level = mailfix_admin_get_access_level('edit', $account);
+
+  $fields = array();
+  $doms_list = mailfix_admin_get_current_dom_list($account, "");
+  $user_list = mailfix_admin_get_current_user_list($account, "");
+
+  switch($access_level) {
+    case MAILFIX_ADMIN_ACCESS_FULL:
+      $form['mailfix']['domain_admin_domains'] = array(
+        '#title' => t('Mailfix Domain Admin For Domains'),
+        '#description' => t('Enter a list of domains in which this user will be able to add and edit other users accounts.'),
+        '#type' => 'textfield',
+        '#autocomplete_path' => 'mailfix_admin/domain_autocomplete/' . $account->uid, 
+        '#default_value' => $doms_list,
+        '#maxlength' => NULL,
+      );
+      $form['mailfix']['domain_admin_users'] = array(
+        '#title' => t('Mailfix Domain Admin For Users'),
+        '#description' => t('Enter a list of users for whom this user will be able to edit account settings.'),
+        '#type' => 'textfield',
+        '#autocomplete_path' => 'mailfix_admin/user_autocomplete/' . $account->uid, 
+        '#default_value' => $user_list,
+        '#maxlength' => NULL,
+      );
+      $form['#validate'][] = 'mailfix_admin_form_user_validate';
+      $form['#submit'][] = 'mailfix_admin_update_user';
+      break;
+    case MAILFIX_ADMIN_ACCESS_READONLY_ADMIN_FIELDS:
+      if ($doms_list) {
+        $form['mailfix']['domain_admin_domains'] = array(
+          '#title' => t('Mailfix Domain Admin For Domains'),
+          '#type' => 'item',
+          '#markup' => $doms_list ? $doms_list : t('No domains.'),
+        );
+      }
+      if ($user_list) {
+        $form['mailfix']['domain_admin_users'] = array(
+          '#title' => t('Mailfix Domain Admin For Users'),
+          '#type' => 'item',
+          '#markup' => $user_list ? $user_list : t('No users.'),
+        );
+      }
+      break;
+  }
+  }
+}
+
+/**
+ * Implementation of hook_permission().
+ */
+function mailfix_admin_permission() {
+  return array(
+    'configure mailfix domain administration' => array(
+       'title' => t('Configure Mailfix domain administration'),
+     ),
+    'view non Mailfix accounts' => array(
+       'title' => t('View non Mailfix accounts'),
+     ),
+    'edit non Mailfix accounts' => array(
+       'title' => t('Edit non Mailfix accounts'),
+     ),
+    'view Mailfix accounts with no admin rights' => array(
+       'title' => t('View Mailfix accounts when having no admin rights'),
+     ),
+    'view domain admin rights' => array(
+       'title' => t('View domain administration rights'),
+     )
+  );
+}
+
+function mailfix_admin_access($type, $uid = NULL) {
+  global $user;
+  switch ($type) {
+    case 'autocomplete':
+      return mailfix_admin_get_current_dom_list($user, "'") > '';
+  }
+}
+
+function mailfix_admin_autocomplete($account, $string) {
+  // The user enters a comma-separated list of domains. We only autocomplete the last domain.
+  // If the user has limited domain access, we only autocomplete with values they can use.
+  global $user;
+
+  $access_where = '';
+
+  if (!user_access('administer users')) {
+    $usable_domains = mailfix_admin_get_current_dom_list($user, "'");
+    $temp_account->uid = $account;
+    $temp_account->name = '(Autocompleting)';      
+    if (mailfix_admin_get_access_level('edit', $temp_account) == MAILFIX_ADMIN_ACCESS_FULL) {
+      # Construct a temporary $account for mailfix_admin_get_current_user_list
+      $existing_domains = mailfix_admin_get_current_dom_list($temp_account, "'");
+      if ($usable_domains != '')
+        $usable_domains .= ',' . $existing_domains;
+      else
+        $usable_domains = $existing_domains;
+    }
+    if ($usable_domains != '')
+      $usable_domains .= ',' . $existing_domains;
+    else
+      $usable_domains = $existing_domains;
+    if ($usable_domains == '')
+      exit(drupal_json_output(''));
+    $access_where = " AND LOWER(d.domain_name) IN ($usable_domains)";
+  }
+
+  $array = drupal_explode_tags($string);
+
+  // Fetch last tag
+  $last_string = trim(array_pop($array));
+
+  $matches = array();
+  $sql = "SELECT d.domain_name FROM {mailfix_domains} d WHERE LOWER(d.domain_name) LIKE LOWER(:match)" . $access_where;
+  $result = db_query_range($sql, 0, 10, array(':match' => $last_string . '%'));
+  watchdog('mailfix', $sql, array('%s' => $last_string), WATCHDOG_NOTICE, NULL);
+
+  $prefix = count($array) ? implode(', ', $array) .', ' : '';
+
+  foreach ($result as $domain) {
+    $matches[$prefix . $domain->domain_name] = check_plain($domain->domain_name);
+  }
+  exit(drupal_json_output($matches));
+}
+
+function mailfix_admin_user_autocomplete($account, $string) {
+  global $user;
+
+  $access_where = '';
+
+  if (!user_access('administer users')) {
+    $usable_users = mailfix_admin_get_current_user_list($user, "'");
+    $temp_account->uid = $account;
+    $temp_account->name = '(Autocompleting)';      
+    if (mailfix_admin_get_access_level('edit', $temp_account) == MAILFIX_ADMIN_ACCESS_FULL) {
+      # Construct a temporary $account for mailfix_admin_get_current_user_list
+      $existing_users = mailfix_admin_get_current_user_list($temp_account, "'");
+      if ($usable_users != '')
+        $usable_users .= ',' . $existing_users;
+      else
+        $usable_users = $existing_users;
+    }
+    if ($usable_users == '')
+      exit(drupal_json_output(''));
+    $access_where = " AND LOWER(u.name) IN ($usable_users)";
+  }
+
+  // Fetch last tag
+  $array = drupal_explode_tags($string);
+  $last_string = trim(array_pop($array));
+
+  $matches = array();
+  $sql = "SELECT u.name FROM {users} u WHERE LOWER(u.name) LIKE LOWER(:match)" . $access_where;
+  $result = db_query_range($sql, 0, 10, array(':match' => $last_string . '%'));
+  watchdog('mailfix', $sql, array('%s' => $last_string), WATCHDOG_NOTICE, NULL);
+
+  $prefix = count($array) ? implode(', ', $array) .', ' : '';
+
+  foreach ($result as $username) {
+    $matches[$prefix . $username->name] = check_plain($username->name);
+  }
+  exit(drupal_json_output($matches));
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function mailfix_admin_menu() {
+  $items['mailfix_admin/user_autocomplete'] = array(
+    'title' => '',
+    'page callback' => 'mailfix_admin_user_autocomplete',
+    'page arguments' => array(2, 3),
+    'access callback' => 'mailfix_admin_access',
+    'access arguments' => array('autocomplete'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['mailfix_admin/domain_autocomplete'] = array(
+    'title' => '',
+    'page callback' => 'mailfix_admin_autocomplete',
+    'page arguments' => array(2, 3),
+    'access callback' => 'mailfix_admin_access',
+    'access arguments' => array('autocomplete'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['mailfix_admin/create_user'] = array(
+    'title' => 'Create a new Mailfix account',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('mailfix_admin_create_user_form'),
+    'access arguments' => array('register a user in a mailfix domain'),
+    'type' => MENU_CALLBACK,
+    'file' => 'mailfix_admin_create_user.inc',
+  );
+  $items['mailfix_admin/%user/delete'] = array(
+    'title' => 'Delete',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('mailfix_admin_confirm_delete_user', 1),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+} // mailfix_menu
+
+/**
+ * Implementation of hook_user().
+ */
+
+/**
+ * Add/update user mailfix settings
+ *
+ * @param object $edit
+ *    User form object with current information passed by reference.
+ * @param object $user
+ *    User object passed by reference.
+ */
+function mailfix_admin_update_user($form, &$form_state) {
+
+  // If mail address has been changed we must update mailfix_users record
+  if (!empty($form['#user']->mail)) {
+  	$values = $form_state['values'];
+    $domain_id = mailfix_domain_id_from_email($form['#user']->mail);
+    if ($domain_id > 0) { // new email matches one registered domain
+      if (empty($values['quota'])) {  // quota has been modified
+        $result = db_query('SELECT default_quota FROM {mailfix_domains} WHERE domain_id = :did', array(':did' => $domain_id))->fetchField();
+        $values['quota'] = $result;
+      }
+      $values['domain_id'] = $domain_id;
+      _mailfix_set_user($values, $form['#user']);
+    }
+    else {  // new email doesn't match any registered domain
+      db_query("DELETE FROM {mailfix_users} WHERE uid = :uid", array(':uid' => $form_state['user']->uid));
+      watchdog(
+        'mailfix', 
+        'Mailfix profile for %user_name deleted.', 
+        array('%user_name' => $form_state['user']->name), 
+        WATCHDOG_NOTICE, 
+        l('view', 'admin/user/user/'. $form_state['user']->uid)
+      );
+    }
+  }
+
+  // Save the domain admin details
+  $result = db_query("DELETE FROM {mailfix_domain_admins} WHERE uid = :uid", array(':uid' => $form_state['user']->uid));
+
+  $array = drupal_explode_tags($form['mailfix']['domain_admin_domains']['#value']);
+  foreach ($array as $domain) {
+    $domain_id = db_query("SELECT d.domain_id AS id FROM {mailfix_domains} d WHERE LOWER(d.domain_name) = LOWER(:domain)", array(':domain' => $domain))->fetchField();
+    $result = db_query("INSERT INTO {mailfix_domain_admins} (domain_id, uid) VALUES (:id, :uid)",
+      array(':id' => $domain_id, ':uid' => $form_state['user']->uid));
+  }
+
+  // Save the domain admin details
+  $result = db_query("DELETE FROM {mailfix_domain_admins_users} WHERE uid = :uid", array(':uid' => $form_state['user']->uid));
+
+  $array = drupal_explode_tags($form['mailfix']['domain_admin_users']['#value']);
+  foreach ($array as $uname) {
+    mailfix_admin_debug("Looking for $uname");
+    $dest_id = db_query("SELECT u.uid AS id FROM {users} u WHERE LOWER(u.name) = LOWER(:uname)", array(':uname' => $uname))->fetchField();
+    mailfix_admin_debug("Got userid $dest_id");
+    $result = db_query("INSERT INTO {mailfix_domain_admins_users} (uid, tuid) VALUES (:uid, :id)",
+      array(':uid' => $form_state['user']->uid, ':id' => $dest_id));
+  }
+} //  mailfix_verify_user
+
+/**
+ * We must validate a few Mailfix fields for proper handling.
+ *
+ * @see mailfix_form_user()
+ */
+function mailfix_admin_form_user_validate($form, &$form_state) {
+
+  // Is the editing user limited to just administering particular domains?
+  // If so, check the mail field is still an allowed domain and set a form error if not.
+  // If so, also check the domain_admin_domains field, ensuring it is a subset of the editing
+  // user's domains.
+
+  $admin_domains = $form_state['values']['domain_admin_domains'];
+
+  // The user enters a comma-separated list of domains. We check each is in their list of allowed domains.
+  global $user;
+
+  $access_where = '';
+
+  if (!user_access('administer users')) {
+    // The user may enter domains the target user can already administer, and domains that
+    // the user editing is allowed to administer.
+    $usable_domains = mailfix_admin_get_current_dom_list($user, "'");
+    $existing_domains = mailfix_admin_get_current_dom_list($form_state['build_info']['args'][0], "'");
+    if ($usable_domains != '')
+      $usable_domains .= ',' . $existing_domains;
+    else
+      $usable_domains = $existing_domains;
+    if ($usable_domains == '') {
+      // NO ALLOWABLE DOMAINS? Set form error if any values are set.
+      if ($string != '')
+        form_set_error('domain_admin_domains', "You have no domains you can delegate.");
+      return;
+    }
+    $access_where = " AND LOWER(d.domain_name) IN ($usable_domains)";
+  }
+
+  $array = drupal_explode_tags($admin_domains);
+
+  $matches = array();
+  foreach ($array as $domain) {
+    $domain = check_plain($domain);
+    mailfix_admin_debug("Checking access to $domain");
+    $sql = "SELECT d.domain_name FROM {mailfix_domains} d WHERE LOWER(d.domain_name) = LOWER(:match)" . $access_where;
+    $result = db_query($sql, array(':match' => db_like($domain)))->fetchField();
+    if (!$result) {
+      form_set_error('domain_admin_domains', t('Domain %domain does not exist or you have no admin rights for it.', array('%domain' => $domain)));
+    }
+  }
+} //  mailfix_form_user_validate
+
+/**
+ * Inject mailfix information when user's info is being displayed.
+ *
+ * @param object $account
+ *    User object passed by reference.
+ */
+function mailfix_admin_view_user(&$account) {
+  $access_level = mailfix_admin_get_access_level('view', $account);
+
+  if ($access_level < MAILFIX_ADMIN_ACCESS_READONLY_ADMIN_FIELDS)
+    return;
+
+  $admin_domains = mailfix_admin_get_current_dom_list($account, '');
+  $admin_users = mailfix_admin_get_current_user_list($account, '');
+
+  if ($admin_domains || $access_level > MAILFIX_ADMIN_ACCESS_READONLY_ADMIN_FIELDS) {
+    $account->content['mailfix']['admin_domains'] = array(
+      '#type' => 'user_profile_item',     // another core themable hook
+      '#title' => 'Domain administration rights',
+      '#weight' => 5,
+      '#value' => $admin_domains ? $admin_domains : t('No domains.'),
+      );
+  }
+  
+  if ($admin_users || $access_level > MAILFIX_ADMIN_ACCESS_READONLY_ADMIN_FIELDS) {
+    $account->content['mailfix']['admin_users'] = array(
+      '#type' => 'user_profile_item',     // another core themable hook
+      '#title' => 'User administration rights',
+      '#weight' => 6,
+      '#value' => $admin_users ? $admin_users : t('No users.'),
+      );
+  }
+  
+} // mailfix_admin_view_user
+
+function mailfix_admin_create_user_block() {
+  global $user;
+
+  $domains = mailfix_admin_get_current_dom_list($user, '');
+
+  // Can the current user create users?
+  if ($domains == '' && !($user->uid == 1 || user_access('administer users')))
+    return NULL;
+
+  $block['subject'] = t('Mailfix Admin Create User');
+  $block['content'] = drupal_get_form('mailfix_admin_create_user_form');
+  return $block;
+}
+
+function mailfix_admin_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks[0]['info'] = t('Mailfix Admin Create User');
+      $blocks[0]['cache'] = BLOCK_CACHE_PER_USER;
+      return $blocks;
+    case 'view':
+      switch ($delta) {
+        case 0:
+          return mailfix_admin_create_user_block();
+          break; 
+      }
+      break;
+  }
+}

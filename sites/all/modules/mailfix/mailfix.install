@@ -1,0 +1,125 @@
+<?php
+/**
+  * @file
+  * Mailfix installer
+  *
+  * This file create the following tables: 
+  *   mailfix_domains, mailfix_users
+  */
+
+/**
+ * Implementation of hook_schema().
+ */
+function mailfix_schema() {
+  $schema['mailfix_domains'] = array(
+    'description' => t('Domains managed by this Drupal server'),
+    'fields' => array(
+      'domain_id' => array(
+        'type' => 'serial',
+        'size' => 'normal',
+        'not null' => TRUE,
+        'description' => t('Primary Key'),
+      ),
+      'domain_name' => array(
+        'type' => 'varchar',
+        'length' => 150,
+        'not null' => TRUE,
+        'description' => t('Domain name, e.g. example.com'),
+      ),
+      'default_quota' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+        'default' => 104857600,
+        'description' => t('Default storage quota for newly created users'),
+      ),
+    ),
+    'unique keys' => array('domain_name' => array('domain_name')),
+    'primary key' => array('domain_id'),
+  );
+  $schema['mailfix_users'] = array(
+    'description' => t('Virtual email users mapping to Drupal accounts'),
+    'fields' => array(
+      'uid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => t('Drupal user ID'),
+      ),
+      'domain_id' => array(
+        'type' => 'int',
+        'size' => 'normal',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Domain ID'),
+      ),
+      'quota' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+        'default' => 104857600,
+        'description' => t('Mail quota, default is 100MB'),
+      ),
+      'forward' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => t('Forward mail to this list of comma-separated addresses'),
+      ),
+      'incoming_bcc' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => t('Comma-delimited list of BCC recipients for incoming mail'),
+      ),
+      'outgoing_bcc' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => t('Comma-delimited list of BCC recipients for outgoing mail'),
+      ),
+      'senders' => array(
+      'type' => 'text',
+      'size' => 'normal',
+      'not null' => FALSE,
+      'default' => NULL,
+      'description' => t('Comma-delimited list of allowed senders, if restricted.'),
+      ),
+    ),
+    'indexes' => array('idx_mailfix_users_domain_id' => array('domain_id')),
+    'primary key' => array('uid'),
+  );
+  return $schema;
+} //mailfix_schema
+
+/**
+ * Add Sender restrictions field.
+ */
+function mailfix_update_6000() {
+  $ret = array();
+
+  $new_field = array(
+    'type' => 'text',
+    'size' => 'normal',
+    'not null' => FALSE,
+    'default' => NULL,
+    'description' => t('Comma-delimited list of allowed senders, if restricted.'),
+  );
+
+  db_add_field($ret, 'mailfix_users', 'senders', $new_field);
+  return $ret;
+}
+
+function mailfix_schema_6000() {
+  $schema = mailfix_schema(__FUNCTION__);
+  $schema['mailfix_users']['fields']['senders'] = array(
+    'type' => 'text',
+    'size' => 'normal',
+    'not null' => FALSE,
+    'default' => NULL,
+    'description' => t('Comma-delimited list of allowed senders, if restricted.'),
+  );
+  return $schema;
+}

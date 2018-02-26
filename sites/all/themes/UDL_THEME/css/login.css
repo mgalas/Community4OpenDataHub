@@ -1,0 +1,41 @@
+.col-sm-3 {
+	width: 22%;
+	height: 750px;
+	position: fixed;
+	top: 60px;
+	bottom: 0;
+	left: 45px;
+	margin-right: 5%;
+}
+
+.well {
+	height:100%;
+	width: 100%;
+	border: 0;
+	border-radius: 0px;
+ 	background-color: #202020;
+}
+
+.block-user {
+	margin-top:30%;
+	color: #e0e0e0;
+}
+
+.form-control {
+color: #e0e0e0;
+background-color: #505050;
+}
+
+.block-user a {
+	color: white;
+}
+
+@media screen and (max-width: 768px){
+	.col-sm-3 {
+		left:0px;
+		margin-left: -2%;
+		margin-right: 0%;
+	}
+}
+
+

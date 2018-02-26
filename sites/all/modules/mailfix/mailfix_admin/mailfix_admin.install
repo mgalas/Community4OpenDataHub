@@ -1,0 +1,84 @@
+<?php
+/**
+  * @file
+  * Mailfix Admin installer
+  *
+  * This file create the following tables: 
+  *   mailfix_domain_admin
+  */
+
+/**
+ * Implementation of hook_schema().
+ */
+function mailfix_admin_schema() {
+  $schema['mailfix_domain_admins'] = array(
+    'description' => t('Mapping of Users to Domains they administer'),
+    'fields' => array(
+      'domain_id' => array(
+        'type' => 'int',
+        'size' => 'normal',
+        'not null' => TRUE,
+        'description' => t('Domain ID'),
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => t('Drupal user ID'),
+      ),
+    ),
+    'indexes' => array('idx_mailfix_admins_domain_id' => array('domain_id')),
+    'primary key' => array('domain_id', 'uid'),
+  );
+
+  $schema['mailfix_domain_admins_users'] = array(
+    'description' => t('Mapping of Users to Users they have explicit permission to administer'),
+    'fields' => array(
+      'uid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => t('Drupal user ID administering.'),
+      ),
+      'tuid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => t('Drupal user ID being administered.'),
+      ),
+    ),
+    'indexes' => array(
+       'idx_mailfix_admins_uid' => array('uid'),
+      'tuid' => array('tuid')
+    ),
+    'primary key' => array('uid', 'tuid'),
+  );
+
+  return $schema;
+} //mailfix_admin_schema
+
+/**
+ * Update 6001: Add support for allowing admin of particular users.
+ */
+function mailfix_admin_update_6001() {
+  $schema['mailfix_domain_admins_users'] = array(
+    'description' => t('Mapping of Users to Users they have explicit permission to administer'),
+    'fields' => array(
+      'uid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => t('Drupal user ID administering.'),
+      ),
+      'tuid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => t('Drupal user ID being administered.'),
+      ),
+    ),
+    'indexes' => array(
+      'idx_mailfix_admins_uid' => array('uid'),
+      'tuid' => array('tuid')
+    ),
+    'primary key' => array('uid', 'tuid'),
+  );
+  $ret = array();
+  db_create_table($ret, 'mailfix_domain_admins_users', $schema['mailfix_domain_admins_users']);
+  return $ret;
+}

@@ -1,0 +1,336 @@
+# $Id: mailfix.es.po,v 1.4 2009/04/10 07:25:34 alxsvdr Exp $
+#
+# Spanish translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  mailfix.domains.inc,v 1.7 2008/12/19 23:35:08 alxsvdr
+#  mailfix.module,v 1.6 2008/11/29 09:55:27 alxsvdr
+#  mailfix.install,v 1.6 2008/11/29 09:55:27 alxsvdr
+#  mailfix.info,v 1.6 2008/11/29 09:55:27 alxsvdr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-04-10 03:14-0400\n"
+"PO-Revision-Date: 2009-04-10 03:16-0400\n"
+"Last-Translator: Alex Saavedra <alxsvdr@gmail.com>\n"
+"Language-Team: Spanish <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: mailfix.domains.inc:20;25
+msgid "Domain %domain_name has been deleted. %domain_users."
+msgstr "El dominio %domain_name ha sido eliminado. %domain_users."
+
+#: mailfix.domains.inc:53
+msgid "Are you sure you want to delete the domain <em>%domain</em>?"
+msgstr "¿Está seguro(a) que desea eliminar el dominio <em>%domain</em>?"
+
+#: mailfix.domains.inc:55
+msgid "This action cannot be undone. All exising email addresses belonging to this domain will no longer be managed by this mail server."
+msgstr "Esta acción no se puede deshacer. Todas las direcciones de correo pertenecientes a este dominio dejarán de ser administradas por este servidor de correo."
+
+#: mailfix.domains.inc:56
+msgid "Delete"
+msgstr "Borrar"
+
+#: mailfix.domains.inc:57
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: mailfix.domains.inc:71;164
+msgid "Domain name"
+msgstr "Nombre de dominio"
+
+#: mailfix.domains.inc:72
+msgid "Enter a valid domain name for which this Drupal server is intended to manage mail, e.g. example.com."
+msgstr "Introduzca un nombre de dominio válido, para el que este servidor Drupal debe gestionar las cuentas de correo, p. ej. example.com."
+
+#: mailfix.domains.inc:78;171
+msgid "Default storage quota"
+msgstr "Cuota máxima de almacenamiento predeterminada"
+
+#: mailfix.domains.inc:79
+msgid "Enter the default mailbox storage quota (in bytes). Default value of 104857600 corresponds to 100MB. For unlimited quota set this value to 0."
+msgstr "Introduzca la cuota máxima de almacenamiento para el buzón de correo (en bytes). El valor predeterminado de 104857600 corresponde a 100MB. Para establecer una cuota ilimitada, introduzca el valor 0."
+
+#: mailfix.domains.inc:83
+#: mailfix.module:52
+msgid "Add domain"
+msgstr "Agregar dominio"
+
+#: mailfix.domains.inc:95
+msgid "The specified domain name contains one or more illegal characters. Spaces or any other special characters except dash (-) and underscore (_) are not allowed."
+msgstr "El dominio especificado contiene uno o más caracteres inválidos. Los espacios en blanco o cualquier otro carácter especial, excepto el guión medio (-) y el guión bajo (_), no están permitidos."
+
+#: mailfix.domains.inc:98;188
+msgid "The mail storage quota must be a positive integer value."
+msgstr "La cuota límite de almacenamiento debe ser un número entero positivo."
+
+#: mailfix.domains.inc:102
+msgid "The specified domain name is already registered."
+msgstr "El nombre de dominio especificado ya está registrado."
+
+#: mailfix.domains.inc:130;135
+msgid "Domain name %domain_name created. %domain_users with default settings."
+msgstr "El nombre de dominio %domain_name ha sido creado. %domain_users con la configuración predeterminada."
+
+#: mailfix.domains.inc:165
+msgid "This is the registered domain name for which this Drupal server is intended to manage mail."
+msgstr "Este es el nombre del dominio registrado para el que Drupal debe gestionar el correo."
+
+#: mailfix.domains.inc:172
+msgid "This is the default mailbox storage quota (in bytes). Default value of 104857600 corresponds to 100MB. For unlimited quota set this value to 0."
+msgstr "Esta es la cuota de correo predefinida (en bytes). El valor predeterminado de 104857600 corresponde a 100MB. Para establecer una cuota ilimitada, establezca el valor a 0."
+
+#: mailfix.domains.inc:176
+msgid "Update domain"
+msgstr "Actualizar dominio"
+
+#: mailfix.domains.inc:204
+msgid "Default quota for domain %domain_name updated."
+msgstr "La cuota de correo predefinida para el dominio %domain_name ha sido actualizada."
+
+#: mailfix.domains.inc:221
+msgid "Domains"
+msgstr "Dominios"
+
+#: mailfix.domains.inc:222
+msgid "Current users"
+msgstr "Usuarios actuales"
+
+#: mailfix.domains.inc:223
+msgid "Default quota"
+msgstr "Cuota predeterminada"
+
+#: mailfix.domains.inc:225
+msgid "Operations"
+msgstr "Operaciones"
+
+#: mailfix.domains.inc:237
+msgid "edit"
+msgstr "editar"
+
+#: mailfix.domains.inc:239
+msgid "delete"
+msgstr "borrar"
+
+#: mailfix.domains.inc:244
+msgid "No registered mail domains were found."
+msgstr "No se encontraron dominios registrados."
+
+#: mailfix.domains.inc:25;135
+#: mailfix.module:132;146;0
+msgid "mailfix"
+msgstr "mailfix"
+
+#: mailfix.domains.inc:23;30
+msgid "1 Mailfix user profile was deleted"
+msgid_plural "@count Mailfix user profiles were deleted"
+msgstr[0] "1 perfil de usuario Mailfix fue eliminado"
+msgstr[1] "@count perfiles de usuario Mailfix fueron eliminados"
+
+#: mailfix.domains.inc:132;140
+msgid "1 user was found and configured"
+msgid_plural "@count users were found and configured"
+msgstr[0] "1 usuario fue encontrado y su perfil configurado"
+msgstr[1] "@count usuarios fueron y sus perfiles configurados"
+
+#: mailfix.module:20
+msgid "<p>The Mailfix module is intended to offer mail accounts to Drupal users. This module offers the following benefits:</p><ul><li>You can manage multiple domains for mail delivery</li><li>Drupal and mail accounts share the same password, thus allowing users to manage their own credentials.</li><li>Users can access their mailbox using POP3, POP3S, IMAP and IMAPS</li><li>Quota support, with per-domain defaults and individual user settings</li><li>Mail forwarding (very useful for disabled accounts)</li><li>Silent BCC monitoring of specific accounts</li><li>Watchdog auditing of Mailfix events</li></ul><p>Once you have registered one or more Mailfix domains, new and existing users who's mail address matches any of those will have a <em>Mailfix settings</em> section in their account profile, filled with default mail quota. You will be able to configure individual settings for automatic forwarding and silent BCC monitoring.</p><p>Detailed instructions to configure the Postfix mail server are available at <a href=\"http://www.howtoforge.com/drupal-plus-postfix-integration-under-ubuntu-8.04\">HowtoForge</a></p>"
+msgstr "<p>El módulo Mailfix asigna cuentas de correo a los usuarios de Drupal. Este módulo ofrece las siguientes ventajas:</p><ul>  <li>Puede gestionar múltiples dominios para la entrega de correo.</li>  <li>Drupal y las cuentas de correo comparten la misma contraseña, permitiendo así a los usuarios la gestión de sus propias credenciales.</li>  <li>Los usuarios pueden acceder a su correo usando POP3, POP3S, IMAP e IMAPS</li>  <li>Soporte para cuota de almacenamiento de los buzones de correo, pudiendo establecerse cuotas predeterminados por dominio y configuración de la misma por usuario</li>  <li>Re-envío automático de correo (muy útil para cuentas deshabilitadas)</li>  <li>Monitoreo silencioso CCO de cuentas específicas</li>  <li>Registro de eventos a través del módulo de sistema dblog</li></ul><p>Después de registrar uno o más dominios de correo en Mailfix, tanto los usuarios nuevos como los existentes, cuya dirección de correo pertenezca a dichos dominios, tendrán una sección denominada <em>Configuración Mailfix</em> en su perfil de usuario. En esta sección la cuota de almacenamiento será creada con el valor predeterminado correspondiente al dominio Mailfix registrado. Es posible cambiar este valor para cada usuario, y configurar valores individuales correspondientes al re-envío automático y al monitoreo silenciosos CCO.  </p><p>Las instrucciones detalladas para configurar un servidor de correo Mailfix están disponibles en <a href=\"http://www.howtoforge.com/drupal-plus-postfix-integration-under-ubuntu-8.04\">HowtoForge</a> (en inglés).</p>"
+
+#: mailfix.module:23
+msgid "This is the list of currently registered Mailfix domains. When you delete a domain, all associated Mailfix user profiles will be deleted."
+msgstr "Esta es la lista de dominios Mailfix actualmente registrados. Si elimina uno de estos dominios, todos los perfiles de usuarios Mailfix serán eliminados también."
+
+#: mailfix.module:26
+msgid "<p>When you add a new Mailfix domain, the following operations take place:</p><ol><li>Existing users' email addresses are scanned for matching domains.</li><li>Every matching profile is populated with default quota</li></ol><p>From now on, if your Postfix server is appropriately configured, associated users will be able to user their mail account.</p>"
+msgstr "<p>Al adicionar un dominio Maifix, las siguientes operaciones se ejecutan:</p><ol><li>Todas las direcciones de correo existentes son comparadas con el dominio añadido.</li><li>Todos los perfiles coincidentes son creados con la cuota de correo predeterminada.</li></ol><p>De ahora en adelante, si el servidor de correo Postfix está correctamente configurado, los usuarios cuyo perfil ha sido creado, podrán utilizar su cuenta de correo.</p>"
+
+#: mailfix.module:137;138
+msgid "no"
+msgstr "no"
+
+#: mailfix.module:137;138
+msgid "yes"
+msgstr "sí"
+
+#: mailfix.module:186
+msgid "The mail storage quota must be a positive value."
+msgstr "La cuota de almacenamiento de correo debe ser un valor superior a cero."
+
+#: mailfix.module:189
+msgid "The mail storage quota must be an integer value. Provided value: %quota"
+msgstr "La cuota de almacenamiento de correo debe ser un valor entero. Valor proporcionado: %quota"
+
+#: mailfix.module:203
+msgid "The specified Forward destination(s) contains illegal email address(es). Spaces or any other special characters except dash (-) and underscore (_) are not allowed. If multiple recipients are specified, you must define one email address per line."
+msgstr "La dirección (o direcciones) de re-envío automático no es (o no son) válida(s). Los espacios en blanco o cualquier carácter especial, con excepción del guión medio (-) y del guión bajo (_), no están permitidos. Si ha declarado múltiples direcciones de re-envío automático, debe especificar una dirección por línea."
+
+#: mailfix.module:221
+msgid "The specified Incoming BCC destination(s) contains illegal email address(es). Spaces or any other special characters except dash (-) and underscore (_) are not allowed. If multiple recipients are specified, you must define one email address per line."
+msgstr "La dirección (o direcciones) de CCO entrante no es (o no son) válida(s). Los espacios en blanco o cualquier carácter especial, con excepción del guión medio (-) y del guión bajo (_), no están permitidos. Si ha declarado múltiples direcciones de CCO entrante, debe especificar una dirección por línea."
+
+#: mailfix.module:239
+msgid "The specified Outgoing BCC destination(s) contains illegal email address(es). Spaces or any other special characters except dash (-) and underscore (_) are not allowed. If multiple recipients are specified, you must define one email address per line."
+msgstr "La dirección (o direcciones) de CCO saliente no es (o no son) válida(s). Los espacios en blanco o cualquier carácter especial, con excepción del guión medio (-) y del guión bajo (_), no están permitidos. Si ha declarado múltiples direcciones de CCO saliente, debe especificar una dirección por línea."
+
+#: mailfix.module:258;329
+msgid "Mailfix Settings"
+msgstr "Configuración de Mailfix"
+
+#: mailfix.module:259
+msgid "<p>If you <em>update</em> an account's e-mail, the Mailfix module will drop any existing Mailfix profile. Then it will verify if the new address matches a registered domain. If a match is found, a Mailfix profile will be created with domain's default settings. If no match is found, no Mailfix profile will be created.</p><p>If you <em>block</em> an account, it will stop receiveing mails and BCC monitoring will be turned off. However, if the <em>forward</em> field is set, incoming mails can still be forwarded to someone else (e.g. a supervisor).</p><p>If you <em>delete</em> an account, the associated Mailfix profile will be deleted as well.</p>"
+msgstr "<p>Si usted <em>actualiza</em> una dirección de correo, el módulo Mailfix descartará cualquier perfil Mailfix asociado existente. Luego verificará si la nueva dirección coincide con un dominio registrado. Si se encuentra una coincidencia, un perfil será creado.</p><p>Si usted <em>bloquea</em> una cuenta, la misma ya no recibirá más correos y el monitoreo BCC será desactivado. Sin embargo, si el campo <em>re-envío automático</em> está activado, todo correo entrante continuará siendo re-enviado (p.ej., a un supervisor).</p><p>Si usted <em>elimina</em> una cuenta, el perfil Mailfix asocido será eliminado también.</p>"
+
+#: mailfix.module:264;334
+msgid "Mail domain"
+msgstr "Dominio de correo"
+
+#: mailfix.module:269;339
+msgid "Quota limit"
+msgstr "Cuota de almacenamiento"
+
+#: mailfix.module:270
+msgid "This is the quota limit for %username in bytes. Useful information: 1kB = 1024 bytes, 1MB = 1048576 bytes, 1GB = 1073741824 bytes"
+msgstr "Ésta es la cuota máxima de almacenamiento para %username en bytes. Información útil: 1kB = 1024 bytes, 1MB = 1048576 bytes, 1GB = 1073741824 bytes"
+
+#: mailfix.module:277
+msgid "Forward destination(s)"
+msgstr "Destinatario(s) de re-envío automático"
+
+#: mailfix.module:278
+msgid "If defined, incoming mails will no longer be delivered to %email. Instead, they will be forwarded to given destination(s). You can specify multiple recipients (one per line). Automatic forwarding is useful in scenarios such as vacations, temporary leave or disabled accounts."
+msgstr "Si está establecido, los correos entrantes ya no serán entregados a %email, sino que serán re-enviados al destinatario (o destinatarios) proporcionado(s). Puede establecer múltiples destinatarios (uno por línea). El re-envío automático es útil en escenarios como vacaciones, ausencia temporal o cuentas deshabilitadas."
+
+#: mailfix.module:288
+msgid "Silent BCC Monitoring"
+msgstr "Monitoreo CCO silencioso"
+
+#: mailfix.module:289
+msgid "You can specify silent monitoring of incoming and outgoing messages for this account. Silent monitoring is useful to audit activity of specific users. You can specify multiple recipients (one per line)."
+msgstr "Puede definir monitoreo silencioso de los correos entrantes y salientes para esta cuenta. El monitoreo silencioso es útil para auditar la actividad de usuarios específicos. Puede definir múltiples recipientes (uno por línea)."
+
+#: mailfix.module:292
+msgid "Incoming messages"
+msgstr "Correo entrante"
+
+#: mailfix.module:293
+msgid "If defined, any incoming mail for %email will be copied as <acronym title=\"Blind Carbon Copy\">BCC</acronym> to given destinations."
+msgstr "Si está definido, todos los correos entrantes para %email serán copiados como <acronym title=\"Copia Carbón Oculta\">CCO</acronym> a los destinatarios especificados."
+
+#: mailfix.module:300
+msgid "Outgoing messages"
+msgstr "Correos salientes"
+
+#: mailfix.module:301
+msgid "If defined, any outgoing mail from %email will be copied as <acronym title=\"Blind Carbon Copy\">BCC</acronym> to given destinations."
+msgstr "Si está definido, todos los correos salientes de %email serán copiados como <acronym title=\"Copia Carbón Oculta\">CCO</acronym> a los destinatarios especificados."
+
+#: mailfix.module:340
+msgid "unlimited"
+msgstr "ilimitado"
+
+#: mailfix.module:345
+msgid "Forward mail to"
+msgstr "Reenviar correo a"
+
+#: mailfix.module:352
+msgid "BCC incoming mail to"
+msgstr "CCO de correos entrante a"
+
+#: mailfix.module:359
+msgid "BCC outgoing mail to"
+msgstr "CCO de correos salientes a"
+
+#: mailfix.module:132
+msgid "Mailfix profile for %user_name updated. Forwarding: %fwd, BCC monitoring: %bcc"
+msgstr "Perfil Mailfix para el usuario %user_name actualizado. Reenvío: %fwd, monitoreo CCO: %bcc"
+
+#: mailfix.module:146
+msgid "Mailfix profile for %user_name deleted."
+msgstr "El perfil Mailfix de %user_name fue eliminado."
+
+#: mailfix.module:37
+msgid "Mailfix domains"
+msgstr "Dominios Mailfix"
+
+#: mailfix.module:38
+msgid "Configure mail server domains."
+msgstr "Configurar dominios de correo."
+
+#: mailfix.module:46
+msgid "List"
+msgstr "Lista"
+
+#: mailfix.module:62
+msgid "Edit domain"
+msgstr "Editar dominio"
+
+#: mailfix.module:71
+msgid "Delete Domain"
+msgstr "Eliminar dominio"
+
+#: mailfix.install:24
+msgid "Domains managed by this Drupal server"
+msgstr "Dominios gestionados por este servidor Drupal"
+
+#: mailfix.install:30
+msgid "Primary Key"
+msgstr "Clave primaria"
+
+#: mailfix.install:36
+msgid "Domain name, e.g. example.com"
+msgstr "Nombre de dominio, p. ej. example.com"
+
+#: mailfix.install:43
+msgid "Default storage quota for newly created users"
+msgstr "Cuota de correo predeterminada para los usuarios creados"
+
+#: mailfix.install:50
+msgid "Virtual email users mapping to Drupal accounts"
+msgstr "Buzones de correo virtuales asociados a las cuentas usuario de Drupal"
+
+#: mailfix.install:55
+msgid "Drupal user ID"
+msgstr "Identificador de usuario Drupal"
+
+#: mailfix.install:62
+msgid "Domain ID"
+msgstr "Identificador de dominio"
+
+#: mailfix.install:69
+msgid "Mail quota, default is 100MB"
+msgstr "Cuota de correo - 100MB predeterminado"
+
+#: mailfix.install:76
+msgid "Forward mail to this list of comma-separated addresses"
+msgstr "Reenviar correo a esta lista CSV de direcciones"
+
+#: mailfix.install:83
+msgid "Comma-delimited list of BCC recipients for incoming mail"
+msgstr "Lista separada por comas de destinatarios CCO para correo entrante"
+
+#: mailfix.install:90
+msgid "Comma-delimited list of BCC recipients for outgoing mail"
+msgstr "Lista separada por comas de destinatarios CCO para correo saliente"
+
+#: mailfix.install:105
+msgid "Mailfix module uninstalled successfully."
+msgstr "El módulo Mailfix ha sido desinstalado satisfactoriamente."
+
+#: mailfix.info:0
+msgid "Mailfix"
+msgstr "Mailfix"
+
+#: mailfix.info:0
+msgid "Provides mail accounts to existing Drupal users for those domains this module is configured to manage."
+msgstr "Proporciona cuentas de correo a los usuarios de Drupal cuya dirección de correo pertenece a los dominios registrados en este módulo."
+
+#: mailfix.info:0
+msgid "Mail"
+msgstr "Correo"
+

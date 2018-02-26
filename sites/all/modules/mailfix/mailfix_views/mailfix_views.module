@@ -1,0 +1,32 @@
+<?php
+/**
+ * @file
+ *   Integration for views and Mailfix
+ *
+ *   Currently only:
+ *     - mailfix domain for a user
+ *     - forward address for a user
+ */
+
+/**
+ * Implementation of hook_views_api().
+ */
+function mailfix_views_views_api() {
+  return array(
+    'api' => 2,
+  );
+}
+
+/**
+ * Filter by mailfix domain admin records.
+ */
+function _mailfix_views_where_sql($ops) {
+
+  $sql = ' SELECT mu.uid AS uid FROM {mailfix_users} mu INNER JOIN {mailfix_domain_admins} mda ON mu.domain_id = mda.domain_id WHERE mda.uid = %d';
+  $args[] = $user->uid;
+
+  return array(
+    'sql' => $sql,
+    'args' => $args
+  );
+}

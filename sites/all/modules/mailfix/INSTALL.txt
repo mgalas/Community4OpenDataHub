@@ -1,0 +1,164 @@
+
+INSTALLATION
+------------
+
+- Place Mailfix module directory into
+    (a) drupal_root/sites/all/modules  (suggested)
+  - or -
+    (b) drupal_root/modules
+
+- Activate Mailfix module:  
+    - go to: Administer >> Site building >> Modules
+    - activate Mailfix module
+  This will install required tables
+
+
+Using Sender Restrictions.
+-------------------------
+
+Mailfix includes support for seeking to restrict who can send email to a
+particular Mailfix managed account. This support is by nature imperfect. It
+is easy for a user to fake their From:, and that's all we have to rely on in
+this context.
+
+Implementing Sender Restrictions involves more than just filling out the field
+in the website. Your MTA's configuration must be modified so that it actually
+uses the data. What follows is how I did this, using Postfix 2.7.
+
+1. /etc/postfix/main.cf
+
+In the above file, add or update the configuration option
+'smtpd_recipient_restrictions'. My value is:
+
+smtpd_recipient_restrictions = reject_unknown_sender_domain, reject_unknown_recipient_domain, reject_unauth_pipelining, permit_mynetworks, check_policy_service unix:private/policy, permit_sasl_authenticated, reject_unauth_destination
+
+Note carefully the warnings you will see on Postfix's pages about where to put
+reject_unauth_destination and the possibility of creating an open relay if you
+aren't careful.
+
+2. /etc/postfix/master.cf
+
+Add a new service along the lines of the following:
+
+policy    unix  -       n       n       -       -       spawn
+  user=nobody argv=/usr/bin/perl /path/to/drupal-allowed_senders.pl
+
+'policy' at the start of this line matches 'policy' in "private/policy" in
+main.cf.
+
+3. Create drupal-allowed_senders.pl.
+
+Here are the contents of my script. I am not a Perl programmer. I just
+modified a similar script that comes with the Postfix manuals.
+
+#! /usr/bin/perl -w
+
+use DBI;
+use Fcntl;
+use Sys::Syslog qw(:DEFAULT setlogsock);
+
+$syslog_socktype = 'unix'; # inet, unix, stream, console
+$syslog_facility="mail";
+$syslog_options="pid";
+$syslog_priority="err";
+
+setlogsock $syslog_socktype;
+openlog $0, $syslog_options, $syslog_facility;
+
+$dbh = DBI->connect('dbi:mysql:MyDatabaseName','MyDatabaseUser','MyDatabasePassword')
+ or die "Connection Error: $DBI::errstr\n";
+
+#    $attr{'recipient'} = $ARGV[0];
+#    $attr{'sender'} = $ARGV[1];
+
+sub smtpd_access_policy {
+    my($sql, $sth, $haystack);
+    #print "Recipient is $attr{'recipient'}\n";
+    #print "Sender is $attr{'sender'}\n";
+
+    $sql = "SELECT senders FROM mailfix_users mu JOIN users u ON mu.uid = u.uid WHERE u.mail = '" . 
+        $attr{'recipient'} . "'";
+    syslog $syslog_priority, "SQL is " . $sql if $verbose;
+    $sth = $dbh->prepare($sql);
+    $sth->execute
+      or die "SQL Error: $DBI::errstr\n";
+
+    my $found = 0;
+
+    while (@row = $sth->fetchrow_array) {
+      if (defined($row[0])) {
+        $haystack = ",@row,";
+        $found = 1;
+      }
+    }
+
+    #print "Found is $found";
+    syslog $syslog_priority, "Haystack is '" . $haystack . "'" if $verbose;
+
+    if (($found == 0) || ($haystack eq ",,")) {
+      return "dunno";
+    }
+
+    if ($haystack =~ m/$attr{'sender'}/) {
+      return "dunno";
+    } else {
+      return "reject";
+    }
+}
+
+#
+# Log an error and abort.
+#
+sub fatal_exit {
+    my($first) = shift(@_);
+    syslog "err", "fatal: $first", @_;
+    exit 1;
+}
+#
+# Unbuffer standard output.
+#
+select((select(STDOUT), $| = 1)[0]);
+
+#   
+# We don't need getopt() for now.
+#   
+while ($option = shift(@ARGV)) {                                                                               
+    if ($option eq "-v") {
+        $verbose = 1;
+    } else {
+        syslog $syslog_priority, "Invalid option: %s. Usage: %s [-v]",
+                $option, $0;
+        exit 1;
+    }
+}
+
+
+#
+# Receive a bunch of attributes, evaluate the policy, send the result.
+#
+while (<STDIN>) {
+    if (/([^=]+)=(.*)\n/) {
+        $attr{substr($1, 0, 512)} = substr($2, 0, 512);
+    } elsif ($_ eq "\n") {
+        if ($verbose) {
+            for (keys %attr) {
+                syslog $syslog_priority, "Attribute: %s=%s", $_, $attr{$_};
+            }
+        }
+        fatal_exit "unrecognized request type: '%s'", $attr{request}
+            unless $attr{"request"} eq "smtpd_access_policy";
+        $action = smtpd_access_policy();
+        syslog $syslog_priority, "Action: %s", $action if $verbose;
+        print STDOUT "action=$action\n\n";
+        %attr = ();
+    } else {
+        chop;
+        syslog $syslog_priority, "warning: ignoring garbage: %.100s", $_;
+    }
+}
+
+4) Don't forget to chmod and chown the script.
+
+After a reload of Postfix, you should be ready to test. Postfix will start
+the script automatically. Add "-v" to the end of the master.cf line for more
+verbose debugging in your syslog.

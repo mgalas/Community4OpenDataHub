@@ -1,0 +1,92 @@
+<?php
+/**
+  * @file
+  * Mailfix Compulsory Accounts installer
+  *
+  * This file creates the following table:
+  *   mailfix_compulsory_accounts
+  */
+
+/**
+ * Implementation of hook_install().
+ */
+function mailfix_compulsory_accounts_install() {
+  db_add_field('mailfix_domains', 'nice_name', array(
+    'type' => 'varchar',
+    'length' => 150,
+    'not null' => FALSE,
+    'description' => st('Nicely formatted subdomain name (used for creating compulsory accounts).'),
+  ));
+
+  db_add_field('mailfix_domains', 'exempt', array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'default' => 0,
+    'description' => st('Whether this domain is exempt from compulsory account requirements.'),
+  ));
+
+} // mailfix_compulsory_accounts_install
+
+/**
+ * Implementation of hook_schema().
+ */
+function mailfix_compulsory_accounts_schema() {
+  $schema['mailfix_compulsory_accounts'] = array(
+    'description' => t('List of accounts that must exist in all Mailfix domains'),
+    'fields' => array(
+      'aid' => array(
+        'type' => 'serial',
+        'size' => 'normal',
+        'not null' => TRUE,
+        'description' => t('Primary Key'),
+      ),
+      'email' => array(
+        'type' => 'varchar',
+        'length' => '50',
+        'not null' => TRUE,
+        'description' => t('Account Address'),
+      ),
+      'username' => array(
+        'type' => 'varchar',
+        'length' => '150',
+        'not null' => TRUE,
+        'description' => t('The user mame to create. It may include \"<domain>\", which will be replaced with the domain name. If not used, the domain name will be prefixed.'),
+      ),
+    ),
+    'unique keys' => array('email' => array('email')),
+    'primary key' => array('aid'),
+  );
+  return $schema;
+} //mailfix_compulsory_accounts_schema
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function mailfix_compulsory_accounts_uninstall() {
+  // Drop fields
+  db_drop_field('mailfix_domains', 'nice_name');
+  db_drop_field('mailfix_domains', 'exempt');
+} // mailfix_compulsory_accounts_uninstall
+
+/**
+ * Implementation of hook_schema_alter(). We alter $schema by reference.
+ *
+ * @param $schema
+ * The system-wide schema collected by drupal_get_schema().
+ */
+function mailfix_schema_alter(&$schema) {
+  // Add field to existing schema.
+  $schema['mailfix_domains']['fields']['nice_name'] = array(
+    'type' => 'varchar',
+    'length' => 150,
+    'not null' => TRUE,
+    'description' => t('Nicely formatted domain name (for compulsory account names).'),
+  );
+
+  $schema['mailfix_domains']['fields']['exempt'] = array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'description' => t('Whether this domain is exempt from compulsory account requirements.'),
+  );
+}
+
