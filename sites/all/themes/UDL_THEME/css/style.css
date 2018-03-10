@@ -1,6 +1,8 @@
 
 .col-sm-9{
 	width: 100%;
+	margin-left: 200px;
+	margin-top: 15px;
 }
 
 .row{
@@ -8,23 +10,22 @@
 	margin: 0 auto;
 }
 
-.region-content {
- 	margin-left: 200px;
-}
+/* we don't need this as we only want a single forum instance - to be removed from the template structure entirely 
+   just a hack for now */
 
 .breadcrumb{
 display:none;
 }
 
 #navbar {
- background-color:#347AB7;	
+ background-color: #151b54;	
  border: none;
 }
 
 #search-block-form input.form-submit, #search-form input.form-submit{
   height: 24px;
 width: 24px;
-cursos: pointer;
+cursor: pointer;
 border: 1px black;
 }
 
@@ -37,7 +38,7 @@ border: 1px black;
   border-radius: 0;
   height: 100%;
   z-index: 1;
-  background-color: #347AB7;
+  background-color: #151b54;
 }
 
 .navbar-fixed-top {

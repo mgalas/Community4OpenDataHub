@@ -1,5 +1,0 @@
-name = Automated Testing
-description = A module to extend SimpleTest for automated testing
-core = 7.x
-
-files[] = tests/helloworld.test

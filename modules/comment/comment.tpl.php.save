@@ -67,27 +67,26 @@
   <?php endif; ?>
 
   <?php print render($title_prefix); ?>
-  <h3<?php print $title_attributes; ?> style="color:#151B54; font-weight: 100; font-size: 23px; font-family: \"Trebuchet MS\", Helvetica, sans-serif;"><?php print $title ?></h3>
+  <h3<?php print $title_attributes; ?>><?php print $title ?></h3> 
   <?php print render($title_suffix); ?>
 
-  <div class="submitted" style="font-family: \"Trebuchet MS\", Helvetica, sans-serif;">
+  <div class="submitted">
     <?php print $permalink; ?>
     <?php print $submitted; ?>
   </div>
 
-  <div class="content"<?php print $content_attributes; ?> style="text-align: justify; margin-bottom: 20px; font-size: 18px; font-family: \"Trebuchet MS\", Helvetica, sans-serif;">
+  <div class="content"<?php print $content_attributes; ?>>
     <?php
       // We hide the comments and links now so that we can render them later.
       hide($content['links']);
       print render($content);
     ?>
     <?php if ($signature): ?>
-    <div class="user-signature clearfix" style="font-family: \"Trebuchet MS\", Helvetica, sans-serif;">
+    <div class="user-signature clearfix">
       <?php print $signature ?>
     </div>
     <?php endif; ?>
   </div>
-<font style="font-family: \"Trebuchet MS\", Helvetica, sans-serif; color: #151B54;">
+
   <?php print render($content['links']) ?>
-</font>
 </div>

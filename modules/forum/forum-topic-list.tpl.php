@@ -37,19 +37,47 @@
  * @ingroup themeable
  */
 ?>
-<table id="forum-topic-<?php print $topic_id; ?>">
-  <thead>
-    <tr><?php print $header; ?></tr>
+<style>
+.title{
+	padding-top: 20px;
+	padding-right: 30px;
+	padding-bottom: 20px;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.last-reply, .replies{
+	padding-left: 20px;
+	padding-right:30px;
+}
+
+.light {
+	background-color: white;
+        transition: 200ms;
+	border-bottom: 2px solid #f0f0f0;
+}
+
+.light:hover {
+	background-color: #f0f0f0;
+	transition: 200ms;
+	border-right: 2px solid rgb(51,122,183);
+	border-left: 2px solid rgb(51,122,183);
+}
+</style>
+
+<font style="font-family:\"Trebuchet MS\", Helvetica, sans-serif;">
+<table id="forum-topic-<?php print $topic_id; ?>" style="margin-top: 30px;">
+  <thead> 
   </thead>
   <tbody>
-  <?php foreach ($topics as $topic): ?>
-    <tr class="<?php print $topic->zebra;?>">
+<?php foreach ($topics as $topic): ?>
+    <tr class="<?php print $topic->zebra;?> light" style="margin-top: 30px; font-size: 15px;">
       <td class="icon"><?php print $topic->icon; ?></td>
       <td class="title">
-        <div>
+        <div style= "margin-left: -2px; border-left: 2px solid rgb(51,122,183); padding-left: 10px;">
           <?php print $topic->title; ?>
         </div>
-        <div>
+        <div style="padding-left:10px; padding-top: 10px; font-size: 12px;">
           <?php print $topic->created; ?>
         </div>
       </td>
@@ -57,16 +85,17 @@
       <td colspan="3"><?php print $topic->message; ?></td>
     <?php else: ?>
       <td class="replies">
-        <?php print $topic->comment_count; ?>
+        <?php print $topic->comment_count; ?> comments
         <?php if ($topic->new_replies): ?>
           <br />
           <a href="<?php print $topic->new_url; ?>"><?php print $topic->new_text; ?></a>
         <?php endif; ?>
       </td>
-      <td class="last-reply"><?php print $topic->last_reply; ?></td>
+      <td class="last-reply" style="padding-left:20px;"><?php print $topic->last_reply; ?></td>
     <?php endif; ?>
     </tr>
   <?php endforeach; ?>
   </tbody>
 </table>
 <?php print $pager; ?>
+</font>

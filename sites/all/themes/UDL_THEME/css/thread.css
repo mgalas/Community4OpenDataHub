@@ -1,0 +1,5 @@
+// thread customization under /modules/comment/comment.tpl.php
+
+.customized-content{
+display:none;
+}
