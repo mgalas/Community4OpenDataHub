@@ -59,7 +59,30 @@
  * @ingroup themeable
  */
 ?>
-<div class="<?php print $classes; ?> clearfix customized-content"<?php print $attributes; ?> style="border-left: 8px solid #151B54; padding-left:30px; padding-bottom: 10px; margin-top: 30px;">
+
+<style>
+.customized-content{
+	margin-bottom: 10px;
+	transition: 200ms;
+	padding-right: 30px;
+	box-shadow: 0px 15px 10px -15px rgba(0,0,0,0.4), -15px 0px 10px -15px rgba(0, 0, 0, 0.2);
+}
+
+.customized-content:hover{
+	transition: 200ms;
+	padding-left: 20px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.submitted{
+	font-size: 12px;
+        font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-style: none;
+	font-weight: 100;
+}
+</style>
+
+<div class="<?php print $classes; ?> clearfix customized-content"<?php print $attributes; ?> style="padding-left:30px; padding-bottom: 10px;">
   <?php print $picture ?>
 
   <?php if ($new): ?>
@@ -67,15 +90,15 @@
   <?php endif; ?>
 
   <?php print render($title_prefix); ?>
-  <h3<?php print $title_attributes; ?> style="color:#151B54; font-weight: 100; font-size: 23px; font-family: \"Trebuchet MS\", Helvetica, sans-serif;"><?php print $title ?></h3>
+  <h3<?php print $title_attributes; ?> style="color:#151B54; font-weight: 100; font-size: 20px; font-family: \"Trebuchet MS\", Helvetica, sans-serif;"><?php print $title ?></h3>
   <?php print render($title_suffix); ?>
 
-  <div class="submitted" style="font-family: \"Trebuchet MS\", Helvetica, sans-serif;">
+  <div class="submitted" style="font-family: \"Trebuchet MS\", Helvetica, sans-serif; font-size: 10px;">
     <?php print $permalink; ?>
     <?php print $submitted; ?>
   </div>
 
-  <div class="content"<?php print $content_attributes; ?> style="text-align: justify; margin-bottom: 20px; font-size: 18px; font-family: \"Trebuchet MS\", Helvetica, sans-serif;">
+  <div class="content"<?php print $content_attributes; ?> style="border-left: 2px solid rgb(35, 82, 124); margin-left: -15px; padding-left: 13px; text-align: justify; margin-bottom: 20px; font-size: 18px; font-family: \"Trebuchet MS\", Helvetica, sans-serif;">
     <?php
       // We hide the comments and links now so that we can render them later.
       hide($content['links']);

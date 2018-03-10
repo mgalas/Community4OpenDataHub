@@ -27,3 +27,4 @@ regions[page_bottom]    = 'Page bottom'
 stylesheets[all][] = css/style.css
 stylesheets[all][] = css/login.css
 stylesheets[all][] = css/thread.css
+stylesheets[all][] = css/user-profile.css

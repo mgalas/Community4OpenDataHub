@@ -3,3 +3,16 @@
 .customized-content{
 display:none;
 }
+
+.row .col-sm-12 h1{
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.field-label{
+        font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.field-items p{
+        font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-size: 17px;
+}

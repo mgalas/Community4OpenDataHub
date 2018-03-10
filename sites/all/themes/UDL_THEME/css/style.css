@@ -1,4 +1,10 @@
 
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+ color: #fff;
+ background-color: #fff;
+ box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.4);
+}
+
 .col-sm-9{
 	width: 100%;
 	margin-left: 200px;
@@ -8,6 +14,7 @@
 .row{
 	width: 90%;
 	margin: 0 auto;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 
 /* we don't need this as we only want a single forum instance - to be removed from the template structure entirely 

@@ -79,7 +79,7 @@
     <div class="navbar-header">
       <?php if ($logo): ?>
         <a class="logo navbar-btn pull-left" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
-          <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" style="width:50px; height:40px; margin-left: -15px;"/>
+          <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" style="width:50px; height:25px; margin-left: -15px; margin-top: 5px;"/>
         </a>
       <?php endif; ?>
 
@@ -106,7 +106,7 @@
           <?php if (!empty($secondary_nav)): ?>
             <?php print render($secondary_nav); ?>
           <?php endif; ?>
-          <?php if (!empty($page['navigation'])): ?>
+         <?php if (!empty($page['navigation'])): ?>
             <?php print render($page['navigation']); ?>
           <?php endif; ?>
       </div>
