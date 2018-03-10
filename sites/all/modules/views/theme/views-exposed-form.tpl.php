@@ -19,6 +19,18 @@
  * @ingroup views_templates
  */
 ?>
+
+<style>
+.views-exposed-widget{
+	margin-left: 500px;
+	margin-top: 5px;
+}
+
+.views-submit-button{
+	margin-left: 0px;
+	margin-top: -20px;
+}
+</style>
 <?php if (!empty($q)): ?>
   <?php
     // This ensures that, if clean URLs are off, the 'q' is added first so that

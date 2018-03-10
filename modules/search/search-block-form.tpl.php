@@ -29,7 +29,7 @@
  * @see template_preprocess_search_block_form()
  */
 ?>
-<div class="container-inline" style="width: 300px;">
+<div class="container-inline" style="margin-top: 20px;">
   <?php if (empty($variables['form']['#block']->subject)): ?>
     <h2 class="element-invisible"><?php print t('Search form'); ?></h2>
   <?php endif; ?>
