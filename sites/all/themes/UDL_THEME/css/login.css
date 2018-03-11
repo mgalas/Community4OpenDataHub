@@ -6,6 +6,8 @@
 	bottom: 0;
 	left: 45px;
 	margin-right: 5%;
+	background-color: #101010;
+	box-shadow: 15px 0px 10px -15px rgba(0,0,0,0.8 );
 }
 
 .well {
@@ -18,11 +20,12 @@
 }
 
 .block-user {
-	margin-top:30%;
+	margin-left: 20px;
+	margin-top: 30%;
 	color: #e0e0e0;
 }
 
-.form-control {
+.well .form-control {
 	color: #e0e0e0;
 	background-color: #505050;
 }

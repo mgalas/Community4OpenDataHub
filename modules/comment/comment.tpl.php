@@ -98,7 +98,7 @@
     <?php print $submitted; ?>
   </div>
 
-  <div class="content"<?php print $content_attributes; ?> style="border-left: 2px solid rgb(35, 82, 124); margin-left: -15px; padding-left: 13px; text-align: justify; margin-bottom: 20px; font-size: 18px; font-family: \"Trebuchet MS\", Helvetica, sans-serif;">
+  <div class="content"<?php print $content_attributes; ?> style="border-left: 1px solid rgb(35, 82, 124); margin-left: 0px; padding-left: 13px; text-align: justify; margin-bottom: 20px; font-size: 18px; font-family: \"Trebuchet MS\", Helvetica, sans-serif;">
     <?php
       // We hide the comments and links now so that we can render them later.
       hide($content['links']);

@@ -22,5 +22,14 @@
  * @see template_preprocess_user_profile_item()
  */
 ?>
-<dt<?php print $attributes; ?>><?php print $title; ?></dt>
-<dd<?php print $attributes; ?> style="width:100px;"><?php print $value; ?></dd>
+<style>
+dt{
+ font-weight: 200;
+ margin-left: 260px;
+ font-family: "Trebuchet MS", Helvetica, sans-serif;
+ margin-top: -37px;
+}
+</style>
+
+<dt<?php print $attributes; ?>><?php print $title; ?> <?php print $value; ?></dt>
+

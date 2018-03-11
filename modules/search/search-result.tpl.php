@@ -64,6 +64,8 @@
  * @ingroup themeable
  */
 ?>
+
+<font style="font-family:\"Trebuchet MS\", Helvetica, sans-serif;">
 <li class="<?php print $classes; ?>"<?php print $attributes; ?>>
   <?php print render($title_prefix); ?>
   <h3 class="title"<?php print $title_attributes; ?>>
@@ -79,3 +81,4 @@
     <?php endif; ?>
   </div>
 </li>
+</font>
