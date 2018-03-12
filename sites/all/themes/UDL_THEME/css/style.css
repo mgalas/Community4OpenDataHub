@@ -15,6 +15,7 @@
 	width: 90%;
 	margin: 0 auto;
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	margin-top:20px;
 }
 
 /* we don't need this as we only want a single forum instance - to be removed from the template structure entirely 
