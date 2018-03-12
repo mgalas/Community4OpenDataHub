@@ -9,6 +9,7 @@
  * Implements hook_install().
  */
 function forum_install() {
+	set_time_limit(300); //5 minutes to install!
   // Set the weight of the forum.module to 1 so it is loaded after the taxonomy.module.
   db_update('system')
     ->fields(array('weight' => 1))

@@ -172,7 +172,8 @@ function forum_menu_local_tasks_alter(&$data, $router_item, $root_path) {
       $links = array();
       // Loop through all bundles for forum taxonomy vocabulary field.
       $field = field_info_field('taxonomy_forums');
-      foreach ($field['bundles']['node'] as $type) {
+       if (isset($field['bundles']['node'])){
+	foreach ($field['bundles']['node'] as $type) {
         if (node_access('create', $type)) {
           $links[$type] = array(
             '#theme' => 'menu_local_action',
@@ -183,6 +184,7 @@ function forum_menu_local_tasks_alter(&$data, $router_item, $root_path) {
           );
         }
       }
+	}
       if (empty($links)) {
         // Authenticated user does not have access to create new topics.
         if ($user->uid) {
