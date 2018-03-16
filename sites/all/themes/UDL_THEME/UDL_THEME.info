@@ -28,3 +28,4 @@ stylesheets[all][] = css/style.css
 stylesheets[all][] = css/login.css
 stylesheets[all][] = css/thread.css
 stylesheets[all][] = css/user-profile.css
+stylesheets[all][] = css/expert-facility.css

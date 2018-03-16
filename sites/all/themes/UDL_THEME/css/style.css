@@ -11,6 +11,34 @@
 	margin-top: 15px;
 }
 
+.parent1 {
+        position: relative;     
+}
+.about {
+	background-color:  #C2FFFF;
+	margin-bottom: 30 px;
+        top:0;
+        transtion: top ease 0.5s;
+
+}
+.about:hover{
+        top:-10px;
+}
+
+
+.parent2 {
+	position: relative;	
+}
+.useage {
+	background-color: #ffeacc;
+	color:ff9600;
+	top:0;
+	transtion: top ease 0.5s;
+
+}
+.useage:hover{
+	top:-10px;
+}
 .row{
 	width: 90%;
 	margin: 0 auto;
@@ -761,3 +789,5 @@ a .glyphicon.icon-after, a.icon-after .glyphicon {
     margin-left: .25em;
     margin-right: -.25em;
 }
+
+
