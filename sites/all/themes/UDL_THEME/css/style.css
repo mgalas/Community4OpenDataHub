@@ -2,7 +2,13 @@
 .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
  color: #fff;
  background-color: #fff;
- box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.4);
+ box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
+}
+
+.page-search tr td{
+ padding: 10px;
+ margin-bottom: 50px;
+ border-bottom:1px solid #e0e0e0;
 }
 
 .col-sm-9{
